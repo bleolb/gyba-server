@@ -40,7 +40,7 @@ class UserController extends Controller
     function getAllUsers(Request $request)
     {
         if ($request->isJson()) {
-            $users = User::orderby($request->campo, $request->orden)->paginate($request->limit);
+            $users = User::orderby($request->field, $request->order)->paginate($request->limit);
             return response()->json($users, 200);
         }
         return response()->json(['error' => 'Unathorized'], 401, []);
@@ -55,7 +55,7 @@ class UserController extends Controller
             $users = User::orWhere('name', 'like', $data['name'] . '%')
                 ->orWhere('user_name', 'like', $data['user_name'] . '%')
                 ->orWhere('email', 'like', $data['email'] . '%')
-                ->orderby($request->campo, $request->orden)->paginate($request->limit);
+                ->orderby($request->field, $request->order)->paginate($request->limit);
             return response()->json($users, 200);
         }
         return response()->json(['error' => 'Unathorized'], 401, []);

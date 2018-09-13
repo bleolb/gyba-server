@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
-class Person extends Model
+class Profesional extends Model
 {
 
     /**
@@ -31,8 +31,8 @@ class Person extends Model
         'about_me',
     ];
 
-    public function applications()
+    public function offers()
     {
-        return $this->belongsToMany('App\Application');
+        return $this->belongsToMany(Offer::class)->withTimestamps();
     }
 }

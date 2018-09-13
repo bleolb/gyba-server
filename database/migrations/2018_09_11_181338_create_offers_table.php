@@ -16,21 +16,21 @@ class CreateOffersTable extends Migration
         Schema::create('offers', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('company_id')->unsigned();
-            $table->string('code');
-            $table->string('contact');
-            $table->string('email');
-            $table->string('phone');
-            $table->string('cell_phone');
-            $table->string('contract_type');
-            $table->string('position');
-            $table->string('broad_field');
-            $table->string('specific_field');
-            $table->string('training_hours');
-            $table->string('remuneration');
-            $table->string('working_day');
-            $table->string('number_jobs');
-            $table->text('activities');
-            $table->text('aditional_information');
+            $table->string('code')->nullable();
+            $table->string('contact')->nullable();
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('cell_phone')->nullable();
+            $table->string('contract_type')->nullable();
+            $table->string('position')->nullable();
+            $table->string('broad_field')->nullable();
+            $table->string('specific_field')->nullable();
+            $table->string('training_hours')->nullable();
+            $table->string('remuneration')->nullable();
+            $table->string('working_day')->nullable();
+            $table->string('number_jobs')->nullable();
+            $table->text('activities')->nullable();
+            $table->text('aditional_information')->nullable();
             $table->timestamps();
         });
     }
