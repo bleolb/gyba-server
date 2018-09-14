@@ -12,8 +12,30 @@
 */
 
 $factory->define(App\User::class, function (Faker\Generator $faker) {
+    static $password;
     return [
-        'name' => $faker->name,
-        'email' => $faker->email,
+        'name' => $faker->text(rand(32, 10)),
+        'user_name' => $faker->text(rand(32, 10)),
+        'email' => $faker->unique()->safeEmail,
+        'password' => str_random(60),
+        'api_token' => str_random(60)];
+});
+
+$factory->define(App\Professional::class, function (Faker\Generator $faker) {
+    return [
+        'first_name' => str_random(10),
+        'last_name' => str_random(10)
+    ];
+});
+
+$factory->define(App\Company::class, function (Faker\Generator $faker) {
+    return [
+        'identity' => $faker->text(rand(32, 10))
+    ];
+});
+
+$factory->define(App\Offer::class, function (Faker\Generator $faker) {
+    return [
+        'identity' => $faker->text(rand(32, 10))
     ];
 });

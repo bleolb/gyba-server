@@ -36,8 +36,8 @@ class Offer extends Model
         return $this->belongsTo('App\Company');
     }
 
-    public function profesionals()
+    public function professionals()
     {
-        return $this->belongsToMany(Profesional::class)->withTimestamps();
+        return $this->belongsToMany(Professional::class)->withTimestamps();
     }
 }

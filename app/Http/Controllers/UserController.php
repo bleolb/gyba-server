@@ -34,7 +34,7 @@ class UserController extends Controller
                 return response()->json(['error' => 'No content'], 406);
             }
         }
-        return response()->json(['error' => 'Unathorized'], 401, []);
+        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 
     function getAllUsers(Request $request)
@@ -43,7 +43,7 @@ class UserController extends Controller
             $users = User::orderby($request->field, $request->order)->paginate($request->limit);
             return response()->json($users, 200);
         }
-        return response()->json(['error' => 'Unathorized'], 401, []);
+        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 
     function filterUsers(Request $request)
@@ -58,12 +58,12 @@ class UserController extends Controller
                 ->orderby($request->field, $request->order)->paginate($request->limit);
             return response()->json($users, 200);
         }
-        return response()->json(['error' => 'Unathorized'], 401, []);
+        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 
     function showUser($id)
     {
-        $users = User::find($id);
+        $users = User::findOrFail($id);
         return response()->json($users, 200);
     }
 
@@ -80,14 +80,14 @@ class UserController extends Controller
             ]);
             return response()->json($user, 201);
         }
-        return response()->json(['error' => 'Unathorized'], 401, []);
+        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 
-    function updateUser(Request $request, $id)
+    function updateUser(Request $request)
     {
         if ($request->isJson()) {
             $data = $request->json()->all();
-            $user = User::find($id)->update([
+            $user = User::find($request->id)->update([
                 'name' => $data['name'],
                 'user_name' => $data['user_name'],
                 'email' => $data['email'],
@@ -96,12 +96,12 @@ class UserController extends Controller
             ]);
             return response()->json($user, 201);
         }
-        return response()->json(['error' => 'Unathorized'], 401, []);
+        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 
-    function deleteUser($id)
+    function deleteUser(Request $request)
     {
-        $user = User::findOrFail($id)->delete();
+        $user = User::findOrFail($request->id)->delete();
         return response()->json($user, 201);
     }
 }

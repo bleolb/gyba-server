@@ -2,32 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Company;
 use App\Offer;
 use Illuminate\Http\Request;
 
 class OfferController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    function getAllProfesionals(Request $request)
+    function getAllProfessionals(Request $request)
     {
         if ($request->isJson()) {
-            $offer = Offer::findOrFail($request->id);
-            $profesionals = $offer->profesionals;
-            return response()->json($profesionals, 200);
+            $offer = Offer::findOrFail($request->offer_id);
+            $professionals = $offer->professionals;
+            return response()->json($professionals, 200);
         }
-        return response()->json(['error' => 'Unathorized'], 401, []);
+        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 
-    function createOfferProfesional(Request $request)
+    function createOfferProfessional(Request $request)
     {
         if ($request->isJson()) {
             $data = $request->json()->all();
@@ -40,14 +31,14 @@ class OfferController extends Controller
             ]);
             return response()->json($user, 201);
         }
-        return response()->json(['error' => 'Unathorized'], 401, []);
+        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 
-    function updateOfferProfesional(Request $request, $id)
+    function updateOfferProfessional(Request $request)
     {
         if ($request->isJson()) {
             $data = $request->json()->all();
-            $user = User::find($id)->update([
+            $user = User::find($data['id'])->update([
                 'name' => $data['name'],
                 'user_name' => $data['user_name'],
                 'email' => $data['email'],
@@ -56,12 +47,43 @@ class OfferController extends Controller
             ]);
             return response()->json($user, 201);
         }
-        return response()->json(['error' => 'Unathorized'], 401, []);
+        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 
-    function deleteOfferProfesional($id)
+    function deleteOfferProfessional($id)
     {
         $user = User::findOrFail($id)->delete();
         return response()->json($user, 201);
+    }
+
+    function createOffer(Request $request)
+    {
+        if ($request->isJson()) {
+            $data = $request->json()->all();
+            $company = Company::findOrFail($request->company_id);
+            $response = $company->offers()->create([
+                'code' => $data['code']
+            ]);
+            return response()->json($response, 201);
+        }
+        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+    }
+
+    function updateOffer(Request $request)
+    {
+        if ($request->isJson()) {
+            $data = $request->json()->all();
+            $offer = Offer::find($request->id)->update([
+                'code' => $data['code']
+            ]);
+            return response()->json($offer, 201);
+        }
+        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+    }
+
+    function deleteOffer(Request $request)
+    {
+        $offer = Offer::findOrFail($request->id)->delete();
+        return response()->json($offer, 201);
     }
 }

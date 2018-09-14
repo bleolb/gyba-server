@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
-class Profesional extends Model
+class Professional extends Model
 {
 
     /**
@@ -18,9 +18,9 @@ class Profesional extends Model
      */
     protected $fillable = [
         'identity',
-        'nationality',
         'first_name',
         'last_name',
+        'nationality',
         'email',
         'civil_status',
         'birthdate',
@@ -34,5 +34,10 @@ class Profesional extends Model
     public function offers()
     {
         return $this->belongsToMany(Offer::class)->withTimestamps();
+    }
+
+    public function languages()
+    {
+        return $this->hasMany('App\Language');
     }
 }

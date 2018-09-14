@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateOfferProfesionalTable extends Migration
+class CreateOfferProfessionalTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateOfferProfesionalTable extends Migration
      */
     public function up()
     {
-        Schema::create('offer_profesional', function (Blueprint $table) {
+        Schema::create('offer_professional', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('offer_id')->unsigned();
-            $table->integer('profesional_id')->unsigned();
+            $table->integer('professional_id')->unsigned();
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateOfferProfesionalTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('offer_profesional');
+        Schema::dropIfExists('offer_professional');
     }
 }

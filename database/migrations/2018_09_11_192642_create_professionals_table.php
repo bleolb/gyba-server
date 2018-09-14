@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProfesionalsTable extends Migration
+class CreateProfessionalsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateProfesionalsTable extends Migration
      */
     public function up()
     {
-        Schema::create('profesionals', function (Blueprint $table) {
+        Schema::create('professionals', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('identity')->nullable();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
-            $table->string('identity')->nullable();
             $table->string('nationality')->nullable();
             $table->string('email')->nullable();
             $table->string('civil_status')->nullable();
@@ -38,6 +38,6 @@ class CreateProfesionalsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('profesionals');
+        Schema::dropIfExists('professionals');
     }
 }
