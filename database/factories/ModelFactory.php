@@ -24,7 +24,10 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
 $factory->define(App\Professional::class, function (Faker\Generator $faker) {
     return [
         'first_name' => str_random(10),
-        'last_name' => str_random(10)
+        'last_name' => str_random(10),
+        'user_id' => function () {
+            return factory(App\User::class)->create()->id;
+        }
     ];
 });
 

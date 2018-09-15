@@ -40,4 +40,9 @@ class Professional extends Model
     {
         return $this->hasMany('App\Language');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

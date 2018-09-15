@@ -9,32 +9,43 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    private function getToken(Request $request)
     {
-        //
+        try {
+            $data = $request->json()->all();
+            $user = User::where('user_name', $data['user_name'])->first();
+            if ($user && Hash::check($data['password'], $user->password)) {
+                return response()->json($user, 200);
+            } else {
+                return false;
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'No content'], 406);
+        }
     }
 
-    function getToken(Request $request)
+    function login(Request $request)
     {
         if ($request->isJson()) {
             try {
-                $data = $request->json()->all();
-                $user = User::where('user_name', $data['user_name'])->first();
-                if ($user && Hash::check($data['password'], $user->password)) {
-                    return response()->json($user, 200);
+                if ($this->getToken($request) != false) {
+                    return $this->getToken($request);
                 } else {
-                    return response()->json(['error' => 'No content'], 406);
+                    return response()->json([], 401);
                 }
             } catch (ModelNotFoundException $e) {
                 return response()->json(['error' => 'No content'], 406);
             }
         }
         return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+    }
+
+    function logout(Request $request)
+    {
+        User::find($request->id)->update([
+            'api_token' => str_random(60),
+        ]);
+        return response()->json([], 201);
     }
 
     function getAllUsers(Request $request)

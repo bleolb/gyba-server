@@ -15,6 +15,7 @@ class CreateProfessionalsTable extends Migration
     {
         Schema::create('professionals', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('user_id')->unsigned();
             $table->string('identity')->nullable();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();

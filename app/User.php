@@ -29,4 +29,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = [
         'password',
     ];
+
+    public function roles()
+    {
+        return $this->belongsToMany('App\Role')->withTimestamps();
+    }
+    public function professional(){
+        return $this->hasOne('App\Professional');
+    }
 }
