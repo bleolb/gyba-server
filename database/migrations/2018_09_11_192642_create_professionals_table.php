@@ -20,7 +20,6 @@ class CreateProfessionalsTable extends Migration
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('nationality')->nullable();
-            $table->string('email')->nullable();
             $table->string('civil_status')->nullable();
             $table->string('birthdate')->nullable();
             $table->string('gender')->nullable();

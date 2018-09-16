@@ -4,25 +4,24 @@ namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use App\Language;
 use App\Professional;
 
-class LanguageController extends Controller
+class AbilityController extends Controller
 {
-    function getAllLanguages(Request $request)
+    function getAllAbilities(Request $request)
     {
         if ($request->isJson()) {
             try {
-                $languages = Language::orderby($request->field, $request->order)->paginate($request->limit);
+                $abilities = Ability::orderby($request->field, $request->order)->paginate($request->limit);
                 return response()->json([
                     'pagination' => [
-                        'total' => $languages->total(),
-                        'current_page' => $languages->currentPage(),
-                        'per_page' => $languages->perPage(),
-                        'last_page' => $languages->lastPage(),
-                        'from' => $languages->firstItem(),
-                        'to' => $languages->lastItem()
-                    ], 'languages' => $languages], 200);
+                        'total' => $abilities->total(),
+                        'current_page' => $abilities->currentPage(),
+                        'per_page' => $abilities->perPage(),
+                        'last_page' => $abilities->lastPage(),
+                        'from' => $abilities->firstItem(),
+                        'to' => $abilities->lastItem()
+                    ], 'abilities' => $abilities], 200);
             } catch (ModelNotFoundException $e) {
                 return response()->json('ModelNotFound', 200);
             } catch (NotFoundHttpException  $e) {
@@ -36,11 +35,11 @@ class LanguageController extends Controller
         return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 
-    function showLanguage($id)
+    function showAbility($id)
     {
         try {
-            $language = Language::findOrFail($id);
-            return response()->json($language, 200);
+            $ability = Ability::findOrFail($id);
+            return response()->json($ability, 200);
         } catch (ModelNotFoundException $e) {
             return response()->json('ModelNotFound', 200);
         } catch (NotFoundHttpException  $e) {
@@ -52,13 +51,13 @@ class LanguageController extends Controller
         }
     }
 
-    function createLanguage(Request $request)
+    function createAbility(Request $request)
     {
         if ($request->isJson()) {
             try {
                 $data = $request->json()->all();
                 $professional = Professional::findOrFail($request->professional_id);
-                $response = $professional->languages()->create([
+                $response = $professional->abilities()->create([
                     'description' => $data['description'],
                     'written_level' => $data['written_level'],
                     'spoken_level' => $data['spoken_level'],
@@ -78,18 +77,18 @@ class LanguageController extends Controller
         return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 
-    function updateLanguage(Request $request)
+    function updateAbility(Request $request)
     {
         if ($request->isJson()) {
             try {
                 $data = $request->json()->all();
-                $language = Language::findOrFail($data['id'])->update([
+                $ability = Ability::findOrFail($data['id'])->update([
                     'description' => $data['description'],
                     'written_level' => $data['written_level'],
                     'spoken_level' => $data['spoken_level'],
                     'reading_level' => $data['reading_level'],
                 ]);
-                return response()->json($language, 201);
+                return response()->json($ability, 201);
             } catch (ModelNotFoundException $e) {
                 return response()->json('ModelNotFound', 200);
             } catch (NotFoundHttpException  $e) {
@@ -103,12 +102,12 @@ class LanguageController extends Controller
         return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 
-    function deleteLanguage(Request $request)
+    function deleteAbility(Request $request)
     {
         if ($request->isJson()) {
             try {
-                $language = Language::findOrFail($request->id)->delete();
-                return response()->json($language, 201);
+                $ability = Ability::findOrFail($request->id)->delete();
+                return response()->json($ability, 201);
             } catch (ModelNotFoundException $e) {
                 return response()->json('ModelNotFound', 200);
             } catch (NotFoundHttpException  $e) {

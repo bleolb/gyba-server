@@ -15,7 +15,7 @@ class Offer extends Model
      */
     protected $fillable = [
         'code',
-        'contacto',
+        'contact',
         'email',
         'phone',
         'cell_phone',

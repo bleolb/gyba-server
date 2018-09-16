@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Professional;
 use App\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -48,6 +49,17 @@ class UserController extends Controller
         return response()->json([], 201);
     }
 
+    function getEmail(Request $request)
+    {
+        if ($request->isJson()) {
+            $users = User::where('email', '=', $request->email)
+                ->join('professionals', 'professionals.user_id', '=', 'users.id')
+                ->get();
+            return response()->json($users, 200);
+        }
+        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+    }
+
     function getAllUsers(Request $request)
     {
         if ($request->isJson()) {
@@ -72,10 +84,13 @@ class UserController extends Controller
         return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 
-    function showUser($id)
+    function showUser(Request $request)
     {
-        $users = User::findOrFail($id);
-        return response()->json($users, 200);
+        if ($request->isJson()) {
+            $users = User::findOrFail($request->id);
+            return response()->json($users, 200);
+        }
+        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 
     function createUser(Request $request)
@@ -88,6 +103,19 @@ class UserController extends Controller
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
                 'api_token' => str_random(60),
+            ]);
+            $user->professional()->create([
+                'identity' => $data['identity'],
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'nationality' => $data['nationality'],
+                'civil_status' => $data['civil_status'],
+                'birthdate' => $data['birthdate'],
+                'gender' => $data['gender'],
+                'phone' => $data['phone'],
+                'cell_phone' => $data['cell_phone'],
+                'address' => $data['address'],
+                'about_me' => $data['about_me'],
             ]);
             return response()->json($user, 201);
         }
