@@ -38,6 +38,6 @@ class Offer extends Model
 
     public function professionals()
     {
-        return $this->belongsToMany(Professional::class)->withTimestamps();
+        return $this->belongsToMany('App\Professional')->withTimestamps();
     }
 }

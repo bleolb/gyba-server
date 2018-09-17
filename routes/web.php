@@ -13,16 +13,18 @@
 
 /* Rutas publicas*/
 $router->group(['middleware' => ['cors']], function () use ($router) {
+    /* Rutas para login y logout*/
+    $router->post('/login', ['uses' => 'UserController@login']);
+
+    /**********************************************************************************************************************/
+
 });
 
 /* Rutas con autenticacion*/
 $router->group(['middleware' => ['auth'], ['cors']], function () use ($router) {
+    $router->post('/logout', ['uses' => 'UserController@logout']);
 });
 
-/* Rutas para login y logout*/
-$router->post('/login', ['uses' => 'UserController@login']);
-$router->post('/logout', ['uses' => 'UserController@logout']);
-/**********************************************************************************************************************/
 
 /* Rutas para los usuarios*/
 $router->get('/users', ['uses' => 'UserController@getAllUsers']);
@@ -79,7 +81,7 @@ $router->put('/courses', ['uses' => 'CourseController@updateCourse']);
 $router->delete('/courses', ['uses' => 'CourseController@deleteCourse']);
 /**********************************************************************************************************************/
 
-/* Rutas para los cursos*/
+/* Rutas para las empresas*/
 $router->get('/companies', ['uses' => 'CompanyController@getAllCompanies']);
 $router->get('/companies/{id}', ['uses' => 'CompanyController@showCompany']);
 $router->post('/companies', ['uses' => 'CompanyController@createCompany']);
@@ -88,3 +90,7 @@ $router->delete('/companies', ['uses' => 'CompanyController@deleteCompany']);
 /**********************************************************************************************************************/
 
 $router->get('/validar', ['uses' => 'UserController@getEmail']);
+
+$router->get('/hola', function() {
+    return "hola mundo";
+});

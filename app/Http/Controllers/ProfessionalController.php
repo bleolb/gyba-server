@@ -29,7 +29,6 @@ class ProfessionalController extends Controller
             } catch (Error $e) {
                 return response()->json("Error", 500);
             }
-
         }
         return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }

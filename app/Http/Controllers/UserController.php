@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        //$this->middleware('auth');
+    }
+
     private function getToken(Request $request)
     {
         try {
@@ -140,7 +145,10 @@ class UserController extends Controller
 
     function deleteUser(Request $request)
     {
-        $user = User::findOrFail($request->id)->delete();
-        return response()->json($user, 201);
+        if ($request->isJson()) {
+            $user = User::findOrFail($request->id)->delete();
+            return response()->json($user, 201);
+        }
+        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 }

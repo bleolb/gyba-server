@@ -18,7 +18,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'user_name', 'api_token','password',
+        'name', 'user_name', 'email', 'api_token', 'password',
     ];
 
     /**
@@ -34,7 +34,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return $this->belongsToMany('App\Role')->withTimestamps();
     }
-    public function professional(){
+
+    public function professional()
+    {
         return $this->hasOne('App\Professional');
     }
 }

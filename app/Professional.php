@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Professional extends Model
 {
-
     /**
      * The attributes that are mass assignable.
      *
@@ -28,7 +27,7 @@ class Professional extends Model
 
     public function offers()
     {
-        return $this->belongsToMany(Offer::class)->withTimestamps();
+        return $this->belongsToMany('App\Offer')->withTimestamps();
     }
 
     public function languages()
@@ -36,9 +35,14 @@ class Professional extends Model
         return $this->hasMany('App\Language');
     }
 
+    public function courses()
+    {
+        return $this->hasMany('App\Course');
+    }
+
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo('App\User');
     }
 
     public function academicFormation()
