@@ -8,54 +8,6 @@ use Illuminate\Http\Request;
 
 class OfferController extends Controller
 {
-    function getAllProfessionals(Request $request)
-    {
-        if ($request->isJson()) {
-            $offer = Offer::findOrFail($request->offer_id);
-            $professionals = $offer->professionals;
-            return response()->json($professionals, 200);
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
-    }
-
-    function createOfferProfessional(Request $request)
-    {
-        if ($request->isJson()) {
-            $data = $request->json()->all();
-            $user = User::create([
-                'name' => $data['name'],
-                'user_name' => $data['user_name'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-                'api_token' => str_random(60),
-            ]);
-            return response()->json($user, 201);
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
-    }
-
-    function updateOfferProfessional(Request $request)
-    {
-        if ($request->isJson()) {
-            $data = $request->json()->all();
-            $user = User::find($data['id'])->update([
-                'name' => $data['name'],
-                'user_name' => $data['user_name'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-                'api_token' => str_random(60),
-            ]);
-            return response()->json($user, 201);
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
-    }
-
-    function deleteOfferProfessional($id)
-    {
-        $user = User::findOrFail($id)->delete();
-        return response()->json($user, 201);
-    }
-
     function getAllOffers(Request $request)
     {
         if ($request->isJson()) {

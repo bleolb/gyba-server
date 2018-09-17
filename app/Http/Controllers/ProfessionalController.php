@@ -85,38 +85,6 @@ class ProfessionalController extends Controller
         return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 
-    function updateOfferProfessional(Request $request)
-    {
-        if ($request->isJson()) {
-            try {
-                $data = $request->json()->all();
-                $professional = User::find($data['id'])->update([
-                    'name' => $data['name'],
-                    'user_name' => $data['user_name'],
-                    'email' => $data['email'],
-                    'password' => Hash::make($data['password']),
-                    'api_token' => str_random(60),
-                ]);
-                return response()->json($professional, 201);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
-            }
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
-    }
-
-    function deleteOfferProfessional($id)
-    {
-        $professional = User::findOrFail($id)->delete();
-        return response()->json($professional, 201);
-    }
-
     /* Metodos para gestionar los datos personales*/
     function createProfessional(Request $request)
     {
@@ -200,6 +168,4 @@ class ProfessionalController extends Controller
             return response()->json(['error' => 'Unsupported Media Type'], 415, []);
         }
     }
-
-
 }

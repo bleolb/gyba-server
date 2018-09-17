@@ -91,6 +91,4 @@ $router->delete('/companies', ['uses' => 'CompanyController@deleteCompany']);
 
 $router->get('/validar', ['uses' => 'UserController@getEmail']);
 
-$router->get('/hola', function() {
-    return "hola mundo";
-});
+$router->get('/getEmail', ['uses' => 'UserController@getEmail']);
