@@ -57,6 +57,9 @@ class AbilityController extends Controller
             try {
                 $data = $request->json()->all();
                 $professional = Professional::findOrFail($request->professional_id);
+                if ($professional === FALSE) {
+                    return response()->json(['error' => 'Invalid parameters'], 406);
+                }
                 $response = $professional->abilities()->create([
                     'description' => $data['description'],
                     'written_level' => $data['written_level'],

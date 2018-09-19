@@ -4,10 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Company;
 use App\Offer;
+use App\User;
 use Illuminate\Http\Request;
 
 class OfferController extends Controller
 {
+    public function prueba(Request $request)
+    {
+        if ($request->isJson()) {
+            $users = User::get();
+            return $users;
+        }
+        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+    }
+
     function getAllOffers(Request $request)
     {
         if ($request->isJson()) {
