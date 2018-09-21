@@ -27,8 +27,13 @@ class Offer extends Model
         'remuneration',
         'working_day',
         'number_jobs',
+        'experience_time',
         'activities',
         'aditional_information',
+        'start_date',
+        'finish_date',
+        'city',
+        'province',
     ];
 
     public function company()

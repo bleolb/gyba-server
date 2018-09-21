@@ -33,7 +33,10 @@ $factory->define(App\Professional::class, function (Faker\Generator $faker) {
 
 $factory->define(App\Company::class, function (Faker\Generator $faker) {
     return [
-        'identity' => $faker->text(rand(32, 10))
+        'identity' => $faker->text(rand(32, 10)),
+        'user_id' => function () {
+            return factory(App\User::class)->create()->id;
+        }
     ];
 });
 

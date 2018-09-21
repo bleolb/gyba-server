@@ -10,9 +10,10 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
-
+$router->get('/prueba', ['uses' => 'UserController@prueba']);
 /* Rutas con autenticacion*/
 $router->group(['middleware' => ['auth']], function () use ($router) {
+
     $router->post('/logout', ['uses' => 'UserController@logout']);
 
     /* Rutas para los usuarios*/
@@ -85,8 +86,8 @@ $router->post('/login', ['uses' => 'UserController@login']);
 /**********************************************************************************************************************/
 
 /* Rutas para registar usuarios (Profesionales y Empresas)*/
-$router->post('/users', ['uses' => 'UserController@createUser']);
-$router->post('/companies', ['uses' => 'CompanyController@createCompany']);
+$router->post('/users/createCompanyUser', ['uses' => 'UserController@createCompanyUser']);
+$router->post('/users/createProfessionalUser', ['uses' => 'UserController@createProfessionalUser']);
 /**********************************************************************************************************************/
 
 /* Rutas para obtener todos los profesionales y ofertas*/

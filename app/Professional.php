@@ -20,7 +20,6 @@ class Professional extends Model
         'birthdate',
         'gender',
         'phone',
-        'cell_phone',
         'address',
         'about_me',
     ];

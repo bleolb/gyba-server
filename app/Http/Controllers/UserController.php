@@ -4,22 +4,28 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function __construct()
+    public function prueba()
     {
-        //$this->middleware('auth');
+
+        $users = User::get();
+        return $users;
+
     }
 
     private function getToken(Request $request)
     {
         try {
             $data = $request->json()->all();
-            $user = User::where('user_name', $data['user_name'])->first();
-            if ($user && Hash::check($data['password'], $user->password)) {
+            $dataUser = $data['user'];
+            $user = User::where('user_name', $dataUser['user_name'])->first();
+            if ($user && Hash::check($dataUser['password'], $user->password)) {
                 return response()->json($user, 200);
             } else {
                 return false;
@@ -29,213 +35,247 @@ class UserController extends Controller
         }
     }
 
-
     function login(Request $request)
     {
-        if ($request->isJson()) {
-            try {
-                if ($this->getToken($request) != false) {
-                    return $this->getToken($request);
-                } else {
-                    return response()->json([], 401);
-                }
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
+
+        try {
+            if ($this->getToken($request) != false) {
+                return $this->getToken($request);
+            } else {
+                return response()->json([], 401);
             }
+        } catch (ModelNotFoundException $e) {
+            return response()->json('ModelNotFound', 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json('NotFoundHttp', 405);
+        } catch (Exception $e) {
+            return response()->json('Exception', 500);
+        } catch (Error $e) {
+            return response()->json('Error', 500);
         }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function logout(Request $request)
     {
-        if ($request->isJson()) {
-            try {
-                User::find($request->id)->update(['api_token' => str_random(60),]);
-                return response()->json([], 201);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
-            }
+
+        try {
+            User::find($request->id)->update(['api_token' => str_random(60),]);
+            return response()->json([], 201);
+        } catch (ModelNotFoundException $e) {
+            return response()->json('ModelNotFound', 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json('NotFoundHttp', 405);
+        } catch (Exception $e) {
+            return response()->json('Exception', 500);
+        } catch (Error $e) {
+            return response()->json('Error', 500);
         }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function checkUser(Request $request)
     {
-        if ($request->isJson()) {
-            try {
-                $users = User::where('email', '=', $request->email)
-                    ->join('professionals', 'professionals.user_id', '=', 'users.id')->get();
-                return response()->json($users, 200);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
-            }
+
+        try {
+            $users = User::where('email', '=', $request->email)
+                ->join('professionals', 'professionals.user_id', '=', 'users.id')->get();
+            return response()->json($users, 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json('ModelNotFound', 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json('NotFoundHttp', 405);
+        } catch (Exception $e) {
+            return response()->json('Exception', 500);
+        } catch (Error $e) {
+            return response()->json('Error', 500);
         }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function getAllUsers(Request $request)
     {
-        if ($request->isJson()) {
-            try {
-                $users = User::orderby($request->field, $request->order)->paginate($request->limit);
-                return response()->json($users, 200);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
-            }
+
+        try {
+            $users = User::orderby($request->field, $request->order)->paginate($request->limit);
+            return response()->json($users, 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json('ModelNotFound', 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json('NotFoundHttp', 405);
+        } catch (Exception $e) {
+            return response()->json('Exception', 500);
+        } catch (Error $e) {
+            return response()->json('Error', 500);
         }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function filterUsers(Request $request)
     {
-        if ($request->isJson()) {
-            try {
-                //para tener varias condiciones en un array
-                //$users = User::orWhere([$request->conditions])
-                $data = $request->json()->all();
-                $users = User::orWhere('name', 'like', $data['name'] . '%')
-                    ->orWhere('user_name', 'like', $data['user_name'] . '%')
-                    ->orWhere('email', 'like', $data['email'] . '%')
-                    ->orderby($request->field, $request->order)->paginate($request->limit);
-                return response()->json($users, 200);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
-            }
+
+        try {
+            //para tener varias condiciones en un array
+            //$users = User::orWhere([$request->conditions])
+            $data = $request->json()->all();
+            $users = User::orWhere('name', 'like', $data['name'] . '%')
+                ->orWhere('user_name', 'like', $data['user_name'] . '%')
+                ->orWhere('email', 'like', $data['email'] . '%')
+                ->orderby($request->field, $request->order)->paginate($request->limit);
+            return response()->json($users, 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json('ModelNotFound', 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json('NotFoundHttp', 405);
+        } catch (Exception $e) {
+            return response()->json('Exception', 500);
+        } catch (Error $e) {
+            return response()->json('Error', 500);
         }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function showUser(Request $request)
     {
-        if ($request->isJson()) {
-            try {
-                $users = User::findOrFail($request->id);
-                return response()->json($users, 200);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
-            }
+
+        try {
+            $users = User::findOrFail($request->id);
+            return response()->json($users, 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json('ModelNotFound', 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json('NotFoundHttp', 405);
+        } catch (Exception $e) {
+            return response()->json('Exception', 500);
+        } catch (Error $e) {
+            return response()->json('Error', 500);
         }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
-    function createUser(Request $request)
+    function createProfessionalUser(Request $request)
     {
-        if ($request->isJson()) {
-            try {
-                $data = $request->json()->all();
-                $user = User::create([
-                    'name' => $data['name'],
-                    'user_name' => $data['user_name'],
-                    'email' => $data['email'],
-                    'password' => Hash::make($data['password']),
-                    'api_token' => str_random(60),
-                ]);
-                $user->professional()->create([
-                    'identity' => $data['identity'],
-                    'first_name' => $data['first_name'],
-                    'last_name' => $data['last_name'],
-                    'nationality' => $data['nationality'],
-                    'civil_status' => $data['civil_status'],
-                    'birthdate' => $data['birthdate'],
-                    'gender' => $data['gender'],
-                    'phone' => $data['phone'],
-                    'cell_phone' => $data['cell_phone'],
-                    'address' => $data['address'],
-                    'about_me' => $data['about_me'],
-                ]);
-                return response()->json($user, 201);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
-            }
+        try {
+            $data = $request->json()->all();
+            $dataUser = $data['user'];
+            $dataProfessional = $data['professional'];
+            DB::beginTransaction();
+            $user = User::create([
+                'name' => strtoupper(['name']),
+                'user_name' => $dataUser['user_name'],
+                'email' => $dataUser['email'],
+                'password' => Hash::make($dataUser['password']),
+                'api_token' => str_random(60),
+            ]);
+            $user->roles()->attach(1);
+            $user->professional()->create([
+                'identity' => $dataProfessional['identity'],
+                'first_name' => strtoupper($dataProfessional['first_name']),
+                'last_name' => strtoupper($dataProfessional['last_name']),
+                'nationality' => strtoupper($dataProfessional['nationality']),
+                'civil_status' => strtoupper($dataProfessional['civil_status']),
+                'birthdate' => $dataProfessional['birthdate'],
+                'gender' => strtoupper($dataProfessional['gender']),
+                'phone' => $dataProfessional['phone'],
+                'address' => strtoupper($dataProfessional['address']),
+                'about_me' => strtoupper($dataProfessional['about_me']),
+            ]);
+            DB::commit();
+            return response()->json($user, 201);
+        } catch (ModelNotFoundException $e) {
+            return response()->json('ModelNotFound', 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json('NotFoundHttp', 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 500);
+        } catch (Exception $e) {
+            return response()->json('Exception', 500);
+        } catch (Error $e) {
+            return response()->json('Error', 500);
         }
+    }
 
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+    function createCompanyUser(Request $request)
+    {
+        try {
+            $data = $request->json()->all();
+            $dataUser = $data['user'];
+            $dataCompany = $data['company'];
+            DB::beginTransaction();
+            $user = User::create([
+                'name' => strtoupper($dataUser['name']),
+                'user_name' => $dataUser['user_name'],
+                'email' => $dataUser['email'],
+                'password' => Hash::make($dataUser['password']),
+                'api_token' => str_random(60),
+            ]);
+            $user->roles()->attach(2);
+            $user->company()->create([
+                'identity' => $dataCompany['identity'],
+                'nature' => $dataCompany['nature'],
+                'trade_name' => $dataCompany['trade_name'],
+                'comercial_activity' => $dataCompany['comercial_activity'],
+                'phone' => $dataCompany['phone'],
+                'cell_phone' => $dataCompany['cell_phone'],
+                'web_page' => $dataCompany['web_page'],
+                'address' => $dataCompany['address'],
+            ]);
+            DB::commit();
+            return response()->json($user, 201);
+        } catch (ModelNotFoundException $e) {
+            return response()->json('ModelNotFound', 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json('NotFoundHttp', 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
+        } catch (Exception $e) {
+            return response()->json('Exception', 500);
+        } catch (Error $e) {
+            return response()->json('Error', 500);
+        }
     }
 
     function updateUser(Request $request)
     {
-        if ($request->isJson()) {
-            try {
-                $data = $request->json()->all();
-                $user = User::find($request->id)->update([
-                    'name' => $data['name'],
-                    'user_name' => $data['user_name'],
-                    'email' => $data['email'],
-                    'password' => Hash::make($data['password']),
-                    'api_token' => str_random(60),
-                ]);
-                return response()->json($user, 201);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
-            }
+        try {
+            $data = $request->json()->all();
+            $user = User::find($request->id)->update([
+                'name' => strtoupper($data['name']),
+                'user_name' => $data['user_name'],
+                'email' => strtolower($data['email']),
+                'password' => Hash::make($data['password']),
+                'api_token' => str_random(60),
+            ]);
+            return response()->json($user, 201);
+        } catch (ModelNotFoundException $e) {
+            return response()->json('ModelNotFound', 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json('NotFoundHttp', 405);
+        } catch (Exception $e) {
+            return response()->json('Exception', 500);
+        } catch (Error $e) {
+            return response()->json('Error', 500);
         }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function deleteUser(Request $request)
     {
-        if ($request->isJson()) {
-            try {
-                $user = User::findOrFail($request->id)->delete();
-                return response()->json($user, 201);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
-            }
+
+        try {
+            $user = User::findOrFail($request->id)->delete();
+            return response()->json($user, 201);
+        } catch (ModelNotFoundException $e) {
+            return response()->json('ModelNotFound', 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json('NotFoundHttp', 405);
+        } catch (Exception $e) {
+            return response()->json('Exception', 500);
+        } catch (Error $e) {
+            return response()->json('Error', 500);
         }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
+
 }
+

@@ -10,7 +10,7 @@ class ProfessionalReferenceController extends Controller
 {
     function getAllProfessionalReferences(Request $request)
     {
-        if ($request->isJson()) {
+
             try {
                 $professionalReferences = ProfessionalReference::orderby($request->field, $request->order)->paginate($request->limit);
                 return response()->json([
@@ -23,16 +23,15 @@ class ProfessionalReferenceController extends Controller
                         'to' => $professionalReferences->lastItem()
                     ], 'professionalReferences' => $professionalReferences], 200);
             } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
+                return response()->json('ModelNotFound', 405);
             } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
+                return response()->json('NotFoundHttp', 405);
             } catch (Exception $e) {
                 return response()->json('Exception', 500);
             } catch (Error $e) {
                 return response()->json('Error', 500);
             }
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function showProfessionalReference($id)
@@ -41,9 +40,9 @@ class ProfessionalReferenceController extends Controller
             $professionalReference = ProfessionalReference::findOrFail($id);
             return response()->json($professionalReference, 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json('ModelNotFound', 200);
+            return response()->json('ModelNotFound', 405);
         } catch (NotFoundHttpException  $e) {
-            return response()->json('NotFoundHttp', 200);
+            return response()->json('NotFoundHttp', 405);
         } catch (Exception $e) {
             return response()->json('Exception', 500);
         } catch (Error $e) {
@@ -53,7 +52,7 @@ class ProfessionalReferenceController extends Controller
 
     function createProfessionalReference(Request $request)
     {
-        if ($request->isJson()) {
+
             try {
                 $data = $request->json()->all();
                 $professional = Professional::findOrFail($request->professional_id);
@@ -65,21 +64,20 @@ class ProfessionalReferenceController extends Controller
                 ]);
                 return response()->json($response, 201);
             } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
+                return response()->json('ModelNotFound', 405);
             } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
+                return response()->json('NotFoundHttp', 405);
             } catch (Exception $e) {
                 return response()->json('Exception', 500);
             } catch (Error $e) {
                 return response()->json('Error', 500);
             }
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function updateProfessionalReference(Request $request)
     {
-        if ($request->isJson()) {
+
             try {
                 $data = $request->json()->all();
                 $professionalReference = ProfessionalReference::findOrFail($data['id'])->update([
@@ -90,34 +88,32 @@ class ProfessionalReferenceController extends Controller
                 ]);
                 return response()->json($professionalReference, 201);
             } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
+                return response()->json('ModelNotFound', 405);
             } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
+                return response()->json('NotFoundHttp', 405);
             } catch (Exception $e) {
                 return response()->json('Exception', 500);
             } catch (Error $e) {
                 return response()->json('Error', 500);
             }
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function deleteProfessionalReference(Request $request)
     {
-        if ($request->isJson()) {
+
             try {
                 $professionalReference = ProfessionalReference::findOrFail($request->id)->delete();
                 return response()->json($professionalReference, 201);
             } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
+                return response()->json('ModelNotFound', 405);
             } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
+                return response()->json('NotFoundHttp', 405);
             } catch (Exception $e) {
                 return response()->json('Exception', 500);
             } catch (Error $e) {
                 return response()->json('Error', 500);
             }
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 }

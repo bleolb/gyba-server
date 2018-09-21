@@ -26,11 +26,16 @@ class CreateOffersTable extends Migration
             $table->string('broad_field')->nullable();
             $table->string('specific_field')->nullable();
             $table->string('training_hours')->nullable();
+            $table->string('experience_time')->nullable();
             $table->string('remuneration')->nullable();
             $table->string('working_day')->nullable();
             $table->string('number_jobs')->nullable();
+            $table->string('start_date')->nullable();
+            $table->string('finish_date')->nullable();
             $table->text('activities')->nullable();
             $table->text('aditional_information')->nullable();
+            $table->text('city')->nullable();
+            $table->text('province')->nullable();
             $table->timestamps();
         });
     }

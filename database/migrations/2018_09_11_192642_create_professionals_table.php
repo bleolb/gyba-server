@@ -21,10 +21,9 @@ class CreateProfessionalsTable extends Migration
             $table->string('last_name')->nullable();
             $table->string('nationality')->nullable();
             $table->string('civil_status')->nullable();
-            $table->string('birthdate')->nullable();
+            $table->date('birthdate')->nullable();
             $table->string('gender')->nullable();
             $table->string('phone')->nullable();
-            $table->string('cell_phone')->nullable();
             $table->string('address')->nullable();
             $table->string('about_me')->nullable();
             $table->timestamps();

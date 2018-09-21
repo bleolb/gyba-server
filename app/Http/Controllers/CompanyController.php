@@ -6,16 +6,15 @@ class CompanyController extends Controller
 {
     function getAllOffers(Request $request)
     {
-        if ($request->isJson()) {
+
             $companies = Company::orderby($request->field, $request->order)->paginate($request->limit);
             return response()->json($companies, 200);
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function filterOffers(Request $request)
     {
-        if ($request->isJson()) {
+
             //para tener varias condiciones en un array
             //$users = User::orWhere([$request->conditions])
             $data = $request->json()->all();
@@ -35,22 +34,20 @@ class CompanyController extends Controller
                     'from' => $offers->firstItem(),
                     'to' => $offers->lastItem()
                 ], 'offers' => $offers], 200);
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function getAllCompanies(Request $request)
     {
-        if ($request->isJson()) {
+
             $companies = Company::orderby($request->field, $request->order)->paginate($request->limit);
             return response()->json($companies, 200);
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function filterCompanies(Request $request)
     {
-        if ($request->isJson()) {
+
             //para tener varias condiciones en un array
             //$companies = Company::orWhere([$request->conditions])
             $data = $request->json()->all();
@@ -59,8 +56,7 @@ class CompanyController extends Controller
                 ->orWhere('email', 'like', $data['email'] . '%')
                 ->orderby($request->field, $request->order)->paginate($request->limit);
             return response()->json($companies, 200);
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function showCompany($id)
@@ -71,7 +67,7 @@ class CompanyController extends Controller
 
     function createCompany(Request $request)
     {
-        if ($request->isJson()) {
+
             $data = $request->json()->all();
             $company = Company::create([
                 'identity' => $data['name'],
@@ -86,13 +82,12 @@ class CompanyController extends Controller
                 'address' => $data['address'],
             ]);
             return response()->json($company, 201);
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function updateCompany(Request $request)
     {
-        if ($request->isJson()) {
+
             $data = $request->json()->all();
             $user = Company::find($data['id'])->update([
                 'identity' => $data['name'],
@@ -107,8 +102,7 @@ class CompanyController extends Controller
                 'address' => $data['address'],
             ]);
             return response()->json($user, 201);
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function deleteCompany(Request $request)

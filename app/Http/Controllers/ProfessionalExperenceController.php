@@ -10,7 +10,7 @@ class ProfessionalExperenceController extends Controller
 {
     function getAllCourses(Request $request)
     {
-        if ($request->isJson()) {
+
             try {
                 $courses = Course::orderby($request->field, $request->order)->paginate($request->limit);
                 return response()->json([
@@ -23,16 +23,15 @@ class ProfessionalExperenceController extends Controller
                         'to' => $courses->lastItem()
                     ], 'courses' => $courses], 200);
             } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
+                return response()->json('ModelNotFound', 405);
             } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
+                return response()->json('NotFoundHttp', 405);
             } catch (Exception $e) {
                 return response()->json('Exception', 500);
             } catch (Error $e) {
                 return response()->json('Error', 500);
             }
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function showACourse($id)
@@ -41,9 +40,9 @@ class ProfessionalExperenceController extends Controller
             $course = Course::findOrFail($id);
             return response()->json($course, 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json('ModelNotFound', 200);
+            return response()->json('ModelNotFound', 405);
         } catch (NotFoundHttpException  $e) {
-            return response()->json('NotFoundHttp', 200);
+            return response()->json('NotFoundHttp', 405);
         } catch (Exception $e) {
             return response()->json('Exception', 500);
         } catch (Error $e) {
@@ -53,7 +52,7 @@ class ProfessionalExperenceController extends Controller
 
     function createCourse(Request $request)
     {
-        if ($request->isJson()) {
+
             try {
                 $data = $request->json()->all();
                 $professional = Professional::findOrFail($request->professional_id);
@@ -65,21 +64,20 @@ class ProfessionalExperenceController extends Controller
                 ]);
                 return response()->json($response, 201);
             } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
+                return response()->json('ModelNotFound', 405);
             } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
+                return response()->json('NotFoundHttp', 405);
             } catch (Exception $e) {
                 return response()->json('Exception', 500);
             } catch (Error $e) {
                 return response()->json('Error', 500);
             }
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function updateCourse(Request $request)
     {
-        if ($request->isJson()) {
+
             try {
                 $data = $request->json()->all();
                 $course = Course::findOrFail($data['id'])->update([
@@ -90,34 +88,32 @@ class ProfessionalExperenceController extends Controller
                 ]);
                 return response()->json($course, 201);
             } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
+                return response()->json('ModelNotFound', 405);
             } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
+                return response()->json('NotFoundHttp', 405);
             } catch (Exception $e) {
                 return response()->json('Exception', 500);
             } catch (Error $e) {
                 return response()->json('Error', 500);
             }
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 
     function deleteCourse(Request $request)
     {
-        if ($request->isJson()) {
+
             try {
                 $course = Course::findOrFail($request->id)->delete();
                 return response()->json($course, 201);
             } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 200);
+                return response()->json('ModelNotFound', 405);
             } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 200);
+                return response()->json('NotFoundHttp', 405);
             } catch (Exception $e) {
                 return response()->json('Exception', 500);
             } catch (Error $e) {
                 return response()->json('Error', 500);
             }
-        }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
+
     }
 }
