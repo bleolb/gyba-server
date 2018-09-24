@@ -13,21 +13,47 @@ class OfferController extends Controller
     function getAllOffers(Request $request)
     {
         $offers = Offer::orderby($request->field, $request->order)->paginate($request->limit);
-        return response()->json($offers, 200);
+        return response()->json([
+            'pagination' => [
+                'total' => $offers->total(),
+                'current_page' => $offers->currentPage(),
+                'per_page' => $offers->perPage(),
+                'last_page' => $offers->lastPage(),
+                'from' => $offers->firstItem(),
+                'to' => $offers->lastItem()
+            ], 'offers' => $offers], 200);
+
+    }
+
+    function filterOffers2(Request $request)
+    {
+        $data = $request->json()->all();
+        $dataFilter = $data['filter'];
+        $offers = Offer::where('code', '=', $dataFilter['code'])
+            ->orWhere('broad_field', 'like', $dataFilter['broad_field'] . '%')
+            ->orWhere('specific_field', 'like', $dataFilter['specific_field'] . '%')
+            ->orWhere('position', 'like', $dataFilter['position'] . '%')
+            ->orWhere('province', 'like', $dataFilter['province'] . '%')
+            ->orWhere('city', 'like', $dataFilter['city'] . '%')
+            ->orderby($request->field, $request->order)
+            ->paginate($request->limit);
+        return response()->json([
+            'pagination' => [
+                'total' => $offers->total(),
+                'current_page' => $offers->currentPage(),
+                'per_page' => $offers->perPage(),
+                'last_page' => $offers->lastPage(),
+                'from' => $offers->firstItem(),
+                'to' => $offers->lastItem()
+            ], 'offers' => $offers], 200);
 
     }
 
     function filterOffers(Request $request)
     {
-
-        //para tener varias condiciones en un array
-        //$users = User::orWhere([$request->conditions])
         $data = $request->json()->all();
-        $offers = Offer::orWhere('broad_field', 'like', $data['broad_field'] . '%')
-            ->orWhere('specific_field', 'like', $data['specific_field'] . '%')
-            ->orWhere('position', 'like', $data['position'] . '%')
-            ->orWhere('remuneration', 'like', $data['remuneration'] . '%')
-            ->orWhere('working_day', 'like', $data['working_day'] . '%')
+        $dataFilter = $data['filters'];
+        $offers = Offer::orWhere($dataFilter['conditions'])
             ->orderby($request->field, $request->order)
             ->paginate($request->limit);
         return response()->json([

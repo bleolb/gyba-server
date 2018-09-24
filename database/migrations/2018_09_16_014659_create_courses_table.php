@@ -19,8 +19,8 @@ class CreateCoursesTable extends Migration
             $table->string('event_type');
             $table->string('institution');
             $table->string('event_name');
-            $table->string('start_date');
-            $table->string('finish_date');
+            $table->dateTime('start_date');
+            $table->dateTime('finish_date');
             $table->string('hours');
             $table->string('type_certification');
             $table->timestamps();

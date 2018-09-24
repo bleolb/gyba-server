@@ -21,6 +21,14 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'api_token' => str_random(60)];
 });
 
+$factory->define(App\Role::class, function (Faker\Generator $faker) {
+
+    return [
+        'description' => $faker->text(rand(32, 10)),
+        'role' => 1
+    ];
+});
+
 $factory->define(App\Professional::class, function (Faker\Generator $faker) {
     return [
         'first_name' => str_random(10),
@@ -44,10 +52,15 @@ $factory->define(App\Offer::class, function (Faker\Generator $faker) {
     return [
         'code' => $faker->text(rand(32, 10)),
         'position' => $faker->text(rand(32, 10)),
+        'city' => $faker->text(rand(32, 10)),
+        'province' => $faker->text(rand(32, 10)),
         'broad_field' => $faker->text(rand(32, 10)),
         'specific_field' => $faker->text(rand(32, 10)),
         'remuneration' => $faker->text(rand(32, 10)),
         'working_day' => $faker->text(rand(32, 10)),
+        'activities' => $faker->text(rand(400, 300)),
+        'start_date' => $faker->dateTimeThisMonth()->format('Y-m-d H:i:s'),
+        'finish_date' => $faker->dateTimeThisMonth()->format('Y-m-d H:i:s'),
         'company_id' => function () {
             return factory(App\Company::class)->create()->id;
         }
@@ -59,7 +72,7 @@ $factory->define(App\AcademicFormation::class, function (Faker\Generator $faker)
         'institution' => $faker->text(rand(32, 10)),
         'career' => $faker->text(rand(32, 10)),
         'professional_degree' => $faker->text(rand(32, 10)),
-        'registration_date' => $faker->text(rand(32, 10)),
+        'registration_date' => $faker->dateTimeThisMonth()->format('Y-m-d H:i:s'),
         'senescyt_code' => $faker->text(rand(32, 10)),
         'professional_id' => function () {
             return factory(App\Professional::class)->create()->id;
@@ -94,8 +107,8 @@ $factory->define(App\Course::class, function (Faker\Generator $faker) {
         'event_type' => $faker->text(rand(32, 10)),
         'institution' => $faker->text(rand(32, 10)),
         'event_name' => $faker->text(rand(32, 10)),
-        'start_date' => $faker->text(rand(32, 10)),
-        'finish_date' => $faker->text(rand(32, 10)),
+        'start_date' => $faker->dateTimeThisMonth()->format('Y-m-d H:i:s'),
+        'finish_date' => $faker->dateTimeThisMonth()->format('Y-m-d H:i:s'),
         'hours' => $faker->text(rand(32, 10)),
         'type_certification' => $faker->text(rand(32, 10)),
         'professional_id' => function () {
@@ -121,8 +134,8 @@ $factory->define(App\ProfessionalExperience::class, function (Faker\Generator $f
         'employer' => $faker->text(rand(32, 10)),
         'position' => $faker->text(rand(32, 10)),
         'job_description' => $faker->text(rand(32, 10)),
-        'start_date' => $faker->text(rand(32, 10)),
-        'finish_date' => $faker->text(rand(32, 10)),
+        'start_date' => $faker->dateTimeThisMonth()->format('Y-m-d H:i:s'),
+        'finish_date' => $faker->dateTimeThisMonth()->format('Y-m-d H:i:s'),
         'reason_leave' => $faker->text(rand(32, 10)),
         'professional_id' => function () {
             return factory(App\Professional::class)->create()->id;

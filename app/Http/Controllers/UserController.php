@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Role;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -13,9 +14,11 @@ class UserController extends Controller
 {
     public function prueba()
     {
-
-        $users = User::get();
-        return $users;
+        $users = User::where('user_name', '1724909443')
+            ->join("role_user", "role_user.user_id", "=", "users.id")
+            ->join("roles", "roles.id", "=", "role_user.role_id")
+            ->first();
+        return response()->json($users, 200);
 
     }
 
@@ -24,20 +27,29 @@ class UserController extends Controller
         try {
             $data = $request->json()->all();
             $dataUser = $data['user'];
-            $user = User::where('user_name', $dataUser['user_name'])->first();
+            $user = User::where('user_name', $dataUser['user_name'])
+                ->orWhere('email', $dataUser['user_name'])
+                ->join("role_user", "role_user.user_id", "=", "users.id")
+                ->join("roles", "roles.id", "=", "role_user.role_id")
+                ->first();
             if ($user && Hash::check($dataUser['password'], $user->password)) {
                 return response()->json($user, 200);
             } else {
                 return false;
             }
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'No content'], 406);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json('NotFoundHttp', 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 500);
+        } catch (Exception $e) {
+            return response()->json('Exception', 500);
+        } catch (Error $e) {
+            return response()->json('Error', 500);
         }
     }
 
     function login(Request $request)
     {
-
         try {
             if ($this->getToken($request) != false) {
                 return $this->getToken($request);
@@ -58,9 +70,10 @@ class UserController extends Controller
 
     function logout(Request $request)
     {
-
+        $data = $request->json()->all();
+        $dataUser = $data['user'];
         try {
-            User::find($request->id)->update(['api_token' => str_random(60),]);
+            User::findOrFail($dataUser['user_id'])->update(['api_token' => str_random(60),]);
             return response()->json([], 201);
         } catch (ModelNotFoundException $e) {
             return response()->json('ModelNotFound', 405);
@@ -76,7 +89,6 @@ class UserController extends Controller
 
     function checkUser(Request $request)
     {
-
         try {
             $users = User::where('email', '=', $request->email)
                 ->join('professionals', 'professionals.user_id', '=', 'users.id')->get();
@@ -113,7 +125,6 @@ class UserController extends Controller
 
     function filterUsers(Request $request)
     {
-
         try {
             //para tener varias condiciones en un array
             //$users = User::orWhere([$request->conditions])
@@ -132,7 +143,6 @@ class UserController extends Controller
         } catch (Error $e) {
             return response()->json('Error', 500);
         }
-
     }
 
     function showUser(Request $request)
@@ -161,7 +171,7 @@ class UserController extends Controller
             $dataProfessional = $data['professional'];
             DB::beginTransaction();
             $user = User::create([
-                'name' => strtoupper(['name']),
+                'name' => strtoupper($dataUser['name']),
                 'user_name' => $dataUser['user_name'],
                 'email' => $dataUser['email'],
                 'password' => Hash::make($dataUser['password']),
@@ -181,7 +191,7 @@ class UserController extends Controller
                 'about_me' => strtoupper($dataProfessional['about_me']),
             ]);
             DB::commit();
-            return response()->json($user, 201);
+            return $this->login($request);
         } catch (ModelNotFoundException $e) {
             return response()->json('ModelNotFound', 405);
         } catch (NotFoundHttpException  $e) {
@@ -221,7 +231,7 @@ class UserController extends Controller
                 'address' => $dataCompany['address'],
             ]);
             DB::commit();
-            return response()->json($user, 201);
+            return $this->login($request);
         } catch (ModelNotFoundException $e) {
             return response()->json('ModelNotFound', 405);
         } catch (NotFoundHttpException  $e) {

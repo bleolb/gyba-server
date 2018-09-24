@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
         factory(App\Professional::class, 100)->create();
         factory(App\Company::class, 100)->create();
         factory(App\User::class, 100)->create();
+        factory(App\Role::class, 2)->create();
         factory(App\Offer::class, 100)->create();
         factory(App\AcademicFormation::class, 100)->create();
         factory(App\Ability::class, 100)->create();
