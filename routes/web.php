@@ -13,9 +13,6 @@
 $router->get('/prueba', ['uses' => 'UserController@prueba']);
 /* Rutas con autenticacion*/
 $router->group(['middleware' => ['auth']], function () use ($router) {
-
-    $router->post('/logout', ['uses' => 'UserController@logout']);
-
     /* Rutas para los usuarios*/
     $router->get('/users', ['uses' => 'UserController@getAllUsers']);
     $router->get('/users/{id}', ['uses' => 'UserController@showUser']);
@@ -68,7 +65,10 @@ $router->group(['middleware' => ['auth']], function () use ($router) {
     /**********************************************************************************************************************/
 
     /* Rutas para las empresas*/
-    $router->get('/companies/offers', ['uses' => 'CompanyController@getAllOffers']);
+    $router->get('/companies/professionals', ['uses' => 'CompanyController@getProfessionals']);
+    $router->get('/companies/offers', ['uses' => 'CompanyController@getOffers']);
+    $router->post('/companies/offers', ['uses' => 'CompanyController@createOffer']);
+    $router->put('/companies/offers', ['uses' => 'CompanyController@updateOffer']);
     $router->post('/companies/offers/filter', ['uses' => 'CompanyController@filterOffers']);
     $router->get('/companies', ['uses' => 'CompanyController@getAllCompanies']);
     $router->get('/companies/{id}', ['uses' => 'CompanyController@showCompany']);
@@ -83,6 +83,7 @@ $router->group(['middleware' => ['auth']], function () use ($router) {
 
 /* Rutas para login y logout*/
 $router->post('/login', ['uses' => 'UserController@login']);
+$router->post('/logout', ['uses' => 'UserController@logout']);
 /**********************************************************************************************************************/
 
 /* Rutas para registar usuarios (Profesionales y Empresas)*/

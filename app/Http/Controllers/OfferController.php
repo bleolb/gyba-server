@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Company;
 use App\Offer;
-use App\User;
 use Illuminate\Http\Request;
 
 class OfferController extends Controller

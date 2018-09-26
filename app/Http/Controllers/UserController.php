@@ -22,7 +22,7 @@ class UserController extends Controller
 
     }
 
-    private function getToken(Request $request)
+    public function login(Request $request)
     {
         try {
             $data = $request->json()->all();
@@ -35,7 +35,7 @@ class UserController extends Controller
             if ($user && Hash::check($dataUser['password'], $user->password)) {
                 return response()->json($user, 200);
             } else {
-                return false;
+                return response()->json([], 401);
             }
         } catch (NotFoundHttpException  $e) {
             return response()->json('NotFoundHttp', 405);
@@ -48,37 +48,20 @@ class UserController extends Controller
         }
     }
 
-    function login(Request $request)
-    {
-        try {
-            if ($this->getToken($request) != false) {
-                return $this->getToken($request);
-            } else {
-                return response()->json([], 401);
-            }
-        } catch (ModelNotFoundException $e) {
-            return response()->json('ModelNotFound', 405);
-        } catch (NotFoundHttpException  $e) {
-            return response()->json('NotFoundHttp', 405);
-        } catch (Exception $e) {
-            return response()->json('Exception', 500);
-        } catch (Error $e) {
-            return response()->json('Error', 500);
-        }
-
-    }
 
     function logout(Request $request)
     {
         $data = $request->json()->all();
         $dataUser = $data['user'];
         try {
-            User::findOrFail($dataUser['user_id'])->update(['api_token' => str_random(60),]);
+            User::where('user_name',$dataUser['user_name'])->update(['api_token' => str_random(60),]);
             return response()->json([], 201);
         } catch (ModelNotFoundException $e) {
-            return response()->json('ModelNotFound', 405);
+            return response()->json($e, 405);
         } catch (NotFoundHttpException  $e) {
-            return response()->json('NotFoundHttp', 405);
+            return response()->json($e, 405);
+        } catch (QueryException  $e) {
+            return response()->json($e, 405);
         } catch (Exception $e) {
             return response()->json('Exception', 500);
         } catch (Error $e) {
@@ -126,8 +109,6 @@ class UserController extends Controller
     function filterUsers(Request $request)
     {
         try {
-            //para tener varias condiciones en un array
-            //$users = User::orWhere([$request->conditions])
             $data = $request->json()->all();
             $users = User::orWhere('name', 'like', $data['name'] . '%')
                 ->orWhere('user_name', 'like', $data['user_name'] . '%')
@@ -271,7 +252,6 @@ class UserController extends Controller
 
     function deleteUser(Request $request)
     {
-
         try {
             $user = User::findOrFail($request->id)->delete();
             return response()->json($user, 201);
@@ -284,8 +264,6 @@ class UserController extends Controller
         } catch (Error $e) {
             return response()->json('Error', 500);
         }
-
     }
-
 }
 

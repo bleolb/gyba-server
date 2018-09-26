@@ -30,8 +30,8 @@ class CreateOffersTable extends Migration
             $table->string('remuneration')->nullable();
             $table->string('working_day')->nullable();
             $table->string('number_jobs')->nullable();
-            $table->dateTime('start_date')->nullable();
-            $table->dateTime('finish_date')->nullable();
+            $table->date('start_date')->nullable();
+            $table->date('finish_date')->nullable();
             $table->text('activities')->nullable();
             $table->text('aditional_information')->nullable();
             $table->text('city')->nullable();

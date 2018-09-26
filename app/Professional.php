@@ -15,6 +15,7 @@ class Professional extends Model
         'identity',
         'first_name',
         'last_name',
+        'email',
         'nationality',
         'civil_status',
         'birthdate',

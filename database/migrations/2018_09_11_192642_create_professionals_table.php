@@ -17,6 +17,7 @@ class CreateProfessionalsTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->string('identity')->nullable();
+            $table->string('email')->nullable();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('nationality')->nullable();

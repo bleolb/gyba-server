@@ -17,13 +17,14 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'name' => $faker->text(rand(32, 10)),
         'user_name' => $faker->unique()->safeEmail,
         'email' => $faker->unique()->safeEmail,
-        'password' => str_random(60),
+        'password' => '123456',
         'api_token' => str_random(60)];
 });
 
 $factory->define(App\Role::class, function (Faker\Generator $faker) {
 
     return [
+
         'description' => $faker->text(rand(32, 10)),
         'role' => 1
     ];
@@ -33,6 +34,7 @@ $factory->define(App\Professional::class, function (Faker\Generator $faker) {
     return [
         'first_name' => str_random(10),
         'last_name' => str_random(10),
+        'email' => $faker->unique()->safeEmail,
         'user_id' => function () {
             return factory(App\User::class)->create()->id;
         }
@@ -42,6 +44,12 @@ $factory->define(App\Professional::class, function (Faker\Generator $faker) {
 $factory->define(App\Company::class, function (Faker\Generator $faker) {
     return [
         'identity' => $faker->text(rand(32, 10)),
+        'nature' => $faker->text(rand(32, 10)),
+        'email' => $faker->unique()->safeEmail,
+        'cell_phone' => $faker->text(rand(32, 10)),
+        'phone' => $faker->text(rand(32, 10)),
+        'trade_name' => $faker->text(rand(32, 10)),
+        'comercial_activity' => $faker->text(rand(32, 10)),
         'user_id' => function () {
             return factory(App\User::class)->create()->id;
         }
@@ -59,8 +67,8 @@ $factory->define(App\Offer::class, function (Faker\Generator $faker) {
         'remuneration' => $faker->text(rand(32, 10)),
         'working_day' => $faker->text(rand(32, 10)),
         'activities' => $faker->text(rand(400, 300)),
-        'start_date' => $faker->dateTimeThisMonth()->format('Y-m-d H:i:s'),
-        'finish_date' => $faker->dateTimeThisMonth()->format('Y-m-d H:i:s'),
+        'start_date' => $faker->dateTimeThisMonth()->format('Y-m-d'),
+        'finish_date' => $faker->dateTimeThisMonth()->format('Y-m-d'),
         'company_id' => function () {
             return factory(App\Company::class)->create()->id;
         }

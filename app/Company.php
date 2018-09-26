@@ -17,6 +17,7 @@ class Company extends Model
         'identity',
         'nature',
         'trade_name',
+        'email',
         'comercial_activity',
         'phone',
         'cell_phone',

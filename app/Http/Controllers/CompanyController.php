@@ -2,21 +2,76 @@
 
 namespace App\Http\Controllers;
 
+use App\Company;
+use App\Offer;
+use App\Professional;
+use App\User;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+
 class CompanyController extends Controller
 {
-    function getAllOffers(Request $request)
+    function getOffers(Request $request)
     {
+        try {
+            $company = Company::where('user_id', $request->user_id)->first();
+            $offers = $company->offers()
+                ->orderby($request->field, $request->order)
+                ->paginate($request->limit);
+            return response()->json([
+                'pagination' => [
+                    'total' => $offers->total(),
+                    'current_page' => $offers->currentPage(),
+                    'per_page' => $offers->perPage(),
+                    'last_page' => $offers->lastPage(),
+                    'from' => $offers->firstItem(),
+                    'to' => $offers->lastItem()
+                ], 'offers' => $offers], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException  $e) {
+            return response()->json($e, 405);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
+    }
 
-            $companies = Company::orderby($request->field, $request->order)->paginate($request->limit);
-            return response()->json($companies, 200);
-
+    function getProfessionals(Request $request)
+    {
+        try {
+            $offer = Offer::findOrFail($request->offer_id);
+            $professionals = $offer->professionals()
+                ->orderby($request->field, $request->order)
+                ->paginate($request->limit);
+            return response()->json([
+                'pagination' => [
+                    'total' => $professionals->total(),
+                    'current_page' => $professionals->currentPage(),
+                    'per_page' => $professionals->perPage(),
+                    'last_page' => $professionals->lastPage(),
+                    'from' => $professionals->firstItem(),
+                    'to' => $professionals->lastItem()
+                ], 'professionals' => $professionals], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException  $e) {
+            return response()->json($e, 405);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
     }
 
     function filterOffers(Request $request)
     {
-
-            //para tener varias condiciones en un array
-            //$users = User::orWhere([$request->conditions])
+        try {
             $data = $request->json()->all();
             $offers = Offer::orWhere('broad_field', 'like', $data['broad_field'] . '%')
                 ->orWhere('specific_field', 'like', $data['specific_field'] . '%')
@@ -34,80 +89,167 @@ class CompanyController extends Controller
                     'from' => $offers->firstItem(),
                     'to' => $offers->lastItem()
                 ], 'offers' => $offers], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException  $e) {
+            return response()->json($e, 405);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
 
     }
 
-    function getAllCompanies(Request $request)
+    function createOffer(Request $request)
     {
-
-            $companies = Company::orderby($request->field, $request->order)->paginate($request->limit);
-            return response()->json($companies, 200);
-
-    }
-
-    function filterCompanies(Request $request)
-    {
-
-            //para tener varias condiciones en un array
-            //$companies = Company::orWhere([$request->conditions])
+        try {
             $data = $request->json()->all();
-            $companies = Company::orWhere('name', 'like', $data['name'] . '%')
-                ->orWhere('user_name', 'like', $data['user_name'] . '%')
-                ->orWhere('email', 'like', $data['email'] . '%')
-                ->orderby($request->field, $request->order)->paginate($request->limit);
-            return response()->json($companies, 200);
-
-    }
-
-    function showCompany($id)
-    {
-        $companies = Company::find($id);
-        return response()->json($companies, 200);
-    }
-
-    function createCompany(Request $request)
-    {
-
-            $data = $request->json()->all();
-            $company = Company::create([
-                'identity' => $data['name'],
-                'type' => $data['user_name'],
-                'email' => $data['email'],
-                'activity' => $data['activity'],
-                'trade_name' => $data['trade_name'],
-                'comercial_activity' => $data['comercial_activity'],
-                'phone' => $data['phone'],
-                'cell_phone' => $data['cell_phone'],
-                'web_page' => $data['web_page'],
-                'address' => $data['address'],
+            $dataOffer = $data['offer'];
+            $dataCompany = $data['company'];
+            $company = Company::where('user_id', $dataCompany['user_id'])->first();
+            $response = $company->offers()->create([
+                'code' => $dataOffer ['code'],
+                'contact' => $dataOffer ['contact'],
+                'email' => $dataOffer ['email'],
+                'phone' => $dataOffer ['phone'],
+                'cell_phone' => $dataOffer ['cell_phone'],
+                'contract_type' => $dataOffer ['contract_type'],
+                'position' => $dataOffer ['position'],
+                'broad_field' => $dataOffer ['broad_field'],
+                'specific_field' => $dataOffer ['specific_field'],
+                'training_hours' => $dataOffer ['training_hours'],
+                'experience_time' => $dataOffer ['experience_time'],
+                'remuneration' => $dataOffer ['remuneration'],
+                'working_day' => $dataOffer ['working_day'],
+                'number_jobs' => $dataOffer ['number_jobs'],
+                'start_date' => $dataOffer ['start_date'],
+                'finish_date' => $dataOffer ['finish_date'],
+                'activities' => $dataOffer ['activities'],
+                'aditional_information' => $dataOffer ['aditional_information'],
+                'province' => $dataOffer ['province'],
+                'city' => $dataOffer ['city'],
             ]);
-            return response()->json($company, 201);
+            return response()->json($response, 201);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException  $e) {
+            return response()->json($e, 405);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
+    }
 
+    function updateOffer(Request $request)
+    {
+        try {
+            $data = $request->json()->all();
+            $dataOffer = $data['offer'];
+
+            $response = Offer::findOrFail($dataOffer['id'])->update([
+                'code' => $dataOffer ['code'],
+                'contact' => $dataOffer ['contact'],
+                'email' => $dataOffer ['email'],
+                'phone' => $dataOffer ['phone'],
+                'cell_phone' => $dataOffer ['cell_phone'],
+                'contract_type' => $dataOffer ['contract_type'],
+                'position' => $dataOffer ['position'],
+                'broad_field' => $dataOffer ['broad_field'],
+                'specific_field' => $dataOffer ['specific_field'],
+                'training_hours' => $dataOffer ['training_hours'],
+                'experience_time' => $dataOffer ['experience_time'],
+                'remuneration' => $dataOffer ['remuneration'],
+                'working_day' => $dataOffer ['working_day'],
+                'number_jobs' => $dataOffer ['number_jobs'],
+                'start_date' => $dataOffer ['start_date'],
+                'finish_date' => $dataOffer ['finish_date'],
+                'activities' => $dataOffer ['activities'],
+                'aditional_information' => $dataOffer ['aditional_information'],
+                'province' => $dataOffer ['province'],
+                'city' => $dataOffer ['city'],
+            ]);
+            return response()->json($response, 201);
+        } catch (ModelNotFoundException $e) {
+            return response()->json('ModelNotFound', 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json('NotFoundHttp', 405);
+        } catch (QueryException  $e) {
+            return response()->json($e, 405);
+        } catch (Exception $e) {
+            return response()->json('Exception', 500);
+        } catch (Error $e) {
+            return response()->json('Error', 500);
+        }
     }
 
     function updateCompany(Request $request)
     {
-
+        try {
             $data = $request->json()->all();
-            $user = Company::find($data['id'])->update([
-                'identity' => $data['name'],
-                'type' => $data['user_name'],
-                'email' => $data['email'],
-                'activity' => $data['activity'],
-                'trade_name' => $data['trade_name'],
-                'comercial_activity' => $data['comercial_activity'],
-                'phone' => $data['phone'],
-                'cell_phone' => $data['cell_phone'],
-                'web_page' => $data['web_page'],
-                'address' => $data['address'],
+            $dataCompany = $data['company'];
+            $response = Company::findOrFail($dataCompany['id'])->update([
+                'identity' => $dataCompany['identity'],
+                'nature' => $dataCompany['nature'],
+                'trade_name' => $dataCompany['trade_name'],
+                'comercial_activity' => $dataCompany['comercial_activity'],
+                'phone' => $dataCompany['phone'],
+                'cell_phone' => $dataCompany['cell_phone'],
+                'web_page' => $dataCompany['web_page'],
+                'address' => $dataCompany['address'],
             ]);
-            return response()->json($user, 201);
-
+            return response()->json($response, 201);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException  $e) {
+            return response()->json($e, 405);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
     }
 
     function deleteCompany(Request $request)
     {
-        $user = Company::findOrFail($request->id)->delete();
-        return response()->json($user, 201);
+        try {
+            $offer = Offer::findOrFail($request->id)->delete();
+            return response()->json($offer, 201);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException  $e) {
+            return response()->json($e, 405);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
+    }
+
+    function showCompany($id)
+    {
+        try {
+            $company = Company::where('user_id', $id)->first();
+            return response()->json(['company' => $company], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException  $e) {
+            return response()->json($e, 405);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
     }
 }
