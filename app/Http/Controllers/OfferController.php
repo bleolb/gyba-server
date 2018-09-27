@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Company;
 use App\Offer;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class OfferController extends Controller
@@ -92,7 +93,23 @@ class OfferController extends Controller
 
     function deleteOffer(Request $request)
     {
-        $offer = Offer::findOrFail($request->id)->delete();
-        return response()->json($offer, 201);
+        try {
+            DB::beginTransaction();
+            $offer = Offer::findOrFail($request->id);
+            $offer->delete();
+            $offer->professionals()->detach();
+            DB::commit();
+            return response()->json($offer, 201);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException  $e) {
+            return response()->json($e, 405);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
     }
 }

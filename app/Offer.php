@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class Offer extends Model
 {
 
@@ -13,6 +14,8 @@ class Offer extends Model
      *
      * @var array
      */
+
+
     protected $fillable = [
         'code',
         'contact',
@@ -34,6 +37,7 @@ class Offer extends Model
         'finish_date',
         'city',
         'province',
+        'status',
     ];
 
     public function company()
@@ -45,4 +49,6 @@ class Offer extends Model
     {
         return $this->belongsToMany('App\Professional')->withTimestamps();
     }
+
+
 }

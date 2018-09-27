@@ -36,6 +36,7 @@ class CreateOffersTable extends Migration
             $table->text('aditional_information')->nullable();
             $table->text('city')->nullable();
             $table->text('province')->nullable();
+            $table->text('status')->nullable();
             $table->timestamps();
         });
     }
