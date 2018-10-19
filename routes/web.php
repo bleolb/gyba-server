@@ -1,16 +1,5 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It is a breeze. Simply tell Lumen the URIs it should respond to
-| and give it the Closure to call when that URI is requested.
-|
-*/
-$router->get('/prueba', ['uses' => 'UserController@prueba']);
 /* Rutas con autenticacion*/
 $router->group(['middleware' => ['auth']], function () use ($router) {
     /* Rutas para los usuarios*/
@@ -35,13 +24,22 @@ $router->group(['middleware' => ['auth']], function () use ($router) {
     $router->post('/professionals/offers/filter', ['uses' => 'ProfessionalController@filterOffers']);
     $router->post('/professionals/offers', ['uses' => 'ProfessionalController@createOffer']);
 
+    $router->get('/professionals/{id}', ['uses' => 'ProfessionalController@showProfessional']);
     $router->post('/professionals', ['uses' => 'ProfessionalController@createProfessional']);
     $router->put('/professionals', ['uses' => 'ProfessionalController@updateProfessional']);
     $router->delete('/professionals', ['uses' => 'ProfessionalController@deleteProfessional']);
     /**********************************************************************************************************************/
 
+    /* Rutas para los Formacion Academica*/
+    $router->get('/academicFormations', ['uses' => 'AcademicFormationController@getAcademicFormations']);
+    $router->get('/academicFormations/{id}', ['uses' => 'AcademicFormationController@showAcademicFormations']);
+    $router->post('/academicFormations', ['uses' => 'AcademicFormationController@createAcademicFormation']);
+    $router->put('/academicFormations', ['uses' => 'AcademicFormationController@updateAcademicFormation']);
+    $router->delete('/academicFormations', ['uses' => 'AcademicFormationController@deleteAcademicFormation']);
+    /**********************************************************************************************************************/
+
     /* Rutas para los idiomas*/
-    $router->get('/languages', ['uses' => 'LanguageController@getAllLanguages']);
+    $router->get('/languages', ['uses' => 'LanguageController@getLanguages']);
     $router->get('/languages/{id}', ['uses' => 'LanguageController@showLanguage']);
     $router->post('/languages', ['uses' => 'LanguageController@createLanguage']);
     $router->put('/languages', ['uses' => 'LanguageController@updateLanguage']);
@@ -49,7 +47,7 @@ $router->group(['middleware' => ['auth']], function () use ($router) {
     /**********************************************************************************************************************/
 
     /* Rutas para las fortalezas*/
-    $router->get('/abilities', ['uses' => 'AbilityController@getAllAbilities']);
+    $router->get('/abilities', ['uses' => 'AbilityController@getAbilities']);
     $router->get('/abilities/{id}', ['uses' => 'AbilityController@showAbility']);
     $router->post('/abilities', ['uses' => 'AbilityController@createAbility']);
     $router->put('/abilities', ['uses' => 'AbilityController@updateAbility']);
@@ -57,11 +55,27 @@ $router->group(['middleware' => ['auth']], function () use ($router) {
     /**********************************************************************************************************************/
 
     /* Rutas para los cursos*/
-    $router->get('/courses', ['uses' => 'CourseController@getAllCourses']);
+    $router->get('/courses', ['uses' => 'CourseController@getCourses']);
     $router->get('/courses/{id}', ['uses' => 'CourseController@showCourse']);
     $router->post('/courses', ['uses' => 'CourseController@createCourse']);
     $router->put('/courses', ['uses' => 'CourseController@updateCourse']);
     $router->delete('/courses', ['uses' => 'CourseController@deleteCourse']);
+    /**********************************************************************************************************************/
+
+    /* Rutas para las experiencias pofesionales*/
+    $router->get('/professionalExperiences', ['uses' => 'ProfessionalExperienceController@getProfessionalExperiences']);
+    $router->get('/professionalExperiences/{id}', ['uses' => 'ProfessionalExperienceController@showProfessionalExperience']);
+    $router->post('/professionalExperiences', ['uses' => 'ProfessionalExperienceController@createProfessionalExperience']);
+    $router->put('/professionalExperiences', ['uses' => 'ProfessionalExperienceController@updateProfessionalExperience']);
+    $router->delete('/professionalExperiences', ['uses' => 'ProfessionalExperienceController@deleteProfessionalExperience']);
+    /**********************************************************************************************************************/
+
+    /* Rutas para las referencias pofesionales*/
+    $router->get('/professionalReferences', ['uses' => 'ProfessionalReferenceController@getProfessionalReferences']);
+    $router->get('/professionalReferences/{id}', ['uses' => 'ProfessionalReferenceController@showProfessionalReference']);
+    $router->post('/professionalReferences', ['uses' => 'ProfessionalReferenceController@createProfessionalReference']);
+    $router->put('/professionalReferences', ['uses' => 'ProfessionalReferenceController@updateProfessionalReference']);
+    $router->delete('/professionalReferences', ['uses' => 'ProfessionalReferenceController@deleteProfessionalReference']);
     /**********************************************************************************************************************/
 
     /* Rutas para las empresas*/
@@ -74,10 +88,8 @@ $router->group(['middleware' => ['auth']], function () use ($router) {
     $router->get('/companies/{id}', ['uses' => 'CompanyController@showCompany']);
     $router->put('/companies', ['uses' => 'CompanyController@updateCompany']);
     $router->delete('/companies', ['uses' => 'CompanyController@deleteCompany']);
-    /**********************************************************************************************************************/
-
+    /******************************************************************************************************************/
 });
-
 
 /* Rutas publicas*/
 
@@ -92,7 +104,8 @@ $router->post('/users/createProfessionalUser', ['uses' => 'UserController@create
 /**********************************************************************************************************************/
 
 /* Rutas para obtener todos los profesionales y ofertas*/
-$router->get('/professionals', ['uses' => 'ProfessionalController@getAllProfessionals']);
+$router->get('/postulants', ['uses' => 'ProfessionalController@getAllProfessionals']);
+$router->get('/oportunities', ['uses' => 'OfferController@getOffers']);
 $router->get('/offers', ['uses' => 'OfferController@getAllOffers']);
 /**********************************************************************************************************************/
 
@@ -100,5 +113,3 @@ $router->get('/offers', ['uses' => 'OfferController@getAllOffers']);
 $router->post('/offers/filter', ['uses' => 'OfferController@filterOffers']);
 $router->post('/professionals/filter', ['uses' => 'ProfessionalController@filterProfessionals']);
 /**********************************************************************************************************************/
-
-

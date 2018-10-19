@@ -30,6 +30,21 @@ class Professional extends Model
         return $this->belongsToMany('App\Offer')->withTimestamps();
     }
 
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
+    public function academicFormations()
+    {
+        return $this->hasMany('App\AcademicFormation');
+    }
+
+    public function abilities()
+    {
+        return $this->hasMany('App\Ability');
+    }
+
     public function languages()
     {
         return $this->hasMany('App\Language');
@@ -40,13 +55,15 @@ class Professional extends Model
         return $this->hasMany('App\Course');
     }
 
-    public function user()
+    public function professionalExperiences()
     {
-        return $this->belongsTo('App\User');
+        return $this->hasMany('App\ProfessionalExperience');
     }
 
-    public function academicFormation()
+    public function professionalReferences()
     {
-        return $this->hasMany('App\AcademicFormations');
+        return $this->hasMany('App\ProfessionalReference');
     }
+
+
 }

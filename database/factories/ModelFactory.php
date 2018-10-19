@@ -62,13 +62,14 @@ $factory->define(App\Offer::class, function (Faker\Generator $faker) {
         'position' => $faker->text(rand(32, 10)),
         'city' => $faker->text(rand(32, 10)),
         'province' => $faker->text(rand(32, 10)),
-        'broad_field' => $faker->text(rand(32, 10)),
-        'specific_field' => $faker->text(rand(32, 10)),
+        'broad_field' => 'EDUCACIÓN',
+        'specific_field' => 'ASISTENTE PEDAGÓGICO CON NIVEL EQUIVALENTE A TECNÓLOGO SUPERIOR',
         'remuneration' => $faker->text(rand(32, 10)),
         'working_day' => $faker->text(rand(32, 10)),
         'activities' => $faker->text(rand(400, 300)),
         'start_date' => $faker->dateTimeThisMonth()->format('Y-m-d'),
         'finish_date' => $faker->dateTimeThisMonth()->format('Y-m-d'),
+        'status' => '1',
         'company_id' => function () {
             return factory(App\Company::class)->create()->id;
         }

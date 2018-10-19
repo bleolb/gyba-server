@@ -14,8 +14,9 @@ class CompanyController extends Controller
     function getOffers(Request $request)
     {
         try {
-            $company = Company::where('user_id', $request->user_id)->first();
+            $company = Company::where('user_id', $request->id)->first();
             $offers = $company->offers()
+                ->where('status', '1')
                 ->orderby($request->field, $request->order)
                 ->paginate($request->limit);
             return response()->json([
@@ -103,13 +104,31 @@ class CompanyController extends Controller
 
     }
 
+    function showCompany($id)
+    {
+        try {
+            $company = Company::where('user_id', $id)->first();
+            return response()->json(['company' => $company], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException  $e) {
+            return response()->json($e, 405);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
+    }
+
     function createOffer(Request $request)
     {
         try {
             $data = $request->json()->all();
             $dataOffer = $data['offer'];
             $dataCompany = $data['company'];
-            $company = Company::where('user_id', $dataCompany['user_id'])->first();
+            $company = Company::where('user_id', $dataCompany['id'])->first();
             $response = $company->offers()->create([
                 'code' => $dataOffer ['code'],
                 'contact' => $dataOffer ['contact'],
@@ -151,7 +170,6 @@ class CompanyController extends Controller
         try {
             $data = $request->json()->all();
             $dataOffer = $data['offer'];
-
             $response = Offer::findOrFail($dataOffer['id'])->update([
                 'code' => $dataOffer ['code'],
                 'contact' => $dataOffer ['contact'],
@@ -235,21 +253,4 @@ class CompanyController extends Controller
         }
     }
 
-    function showCompany($id)
-    {
-        try {
-            $company = Company::where('user_id', $id)->first();
-            return response()->json(['company' => $company], 200);
-        } catch (ModelNotFoundException $e) {
-            return response()->json($e, 405);
-        } catch (NotFoundHttpException  $e) {
-            return response()->json($e, 405);
-        } catch (QueryException  $e) {
-            return response()->json($e, 405);
-        } catch (Exception $e) {
-            return response()->json($e, 500);
-        } catch (Error $e) {
-            return response()->json($e, 500);
-        }
-    }
 }

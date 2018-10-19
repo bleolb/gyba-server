@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Professional;
+use App\Course;
 
 class CourseController extends Controller
 {
-    function getAllCourses(Request $request)
+    function getCourses(Request $request)
     {
-
-            try {
-                $courses = Course::orderby($request->field, $request->order)->paginate($request->limit);
+        try {
+            $professional = Professional::where('user_id', $request->user_id)->first();
+            if ($professional) {
+                $courses = Course::where('professional_id', $professional->id)
+                    ->orderby($request->field, $request->order)
+                    ->paginate($request->limit);
                 return response()->json([
                     'pagination' => [
                         'total' => $courses->total(),
@@ -22,98 +26,127 @@ class CourseController extends Controller
                         'from' => $courses->firstItem(),
                         'to' => $courses->lastItem()
                     ], 'courses' => $courses], 200);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 405);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 405);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
+            } else {
+                return response()->json([
+                    'pagination' => [
+                        'total' => 0,
+                        'current_page' => 1,
+                        'per_page' => $request->limit,
+                        'last_page' => 1,
+                        'from' => null,
+                        'to' => null
+                    ], 'courses' => null], 404);
             }
-
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        } catch (ErrorException $e) {
+            return response()->json($e, 500);
+        }
     }
 
     function showCourse($id)
     {
         try {
             $course = Course::findOrFail($id);
-            return response()->json($course, 200);
+            return response()->json(['course' => $course], 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json('ModelNotFound', 405);
+            return response()->json($e, 405);
         } catch (NotFoundHttpException  $e) {
-            return response()->json('NotFoundHttp', 405);
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
         } catch (Exception $e) {
-            return response()->json('Exception', 500);
+            return response()->json($e, 500);
         } catch (Error $e) {
-            return response()->json('Error', 500);
+            return response()->json($e, 500);
         }
     }
 
     function createCourse(Request $request)
     {
-
-            try {
-                $data = $request->json()->all();
-                $professional = Professional::findOrFail($request->professional_id);
+        try {
+            $data = $request->json()->all();
+            $dataUser = $data['user'];
+            $dataCourse = $data['course'];
+            $professional = Professional::where('user_id', $dataUser['id'])->first();
+            if ($professional) {
                 $response = $professional->courses()->create([
-                    'description' => $data['description'],
-                    'written_level' => $data['written_level'],
-                    'spoken_level' => $data['spoken_level'],
-                    'reading_level' => $data['reading_level'],
+                    'event_type' => $dataCourse ['event_type'],
+                    'institution' => $dataCourse ['institution'],
+                    'event_name' => $dataCourse ['event_name'],
+                    'start_date' => $dataCourse ['start_date'],
+                    'finish_date' => $dataCourse ['finish_date'],
+                    'hours' => $dataCourse ['hours'],
+                    'type_certification' => $dataCourse ['type_certification'],
                 ]);
                 return response()->json($response, 201);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 405);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 405);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
+            } else {
+                return response()->json(null, 404);
             }
-
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
     }
 
     function updateCourse(Request $request)
     {
-
-            try {
-                $data = $request->json()->all();
-                $course = Course::findOrFail($data['id'])->update([
-                    'description' => $data['description'],
-                    'written_level' => $data['written_level'],
-                    'spoken_level' => $data['spoken_level'],
-                    'reading_level' => $data['reading_level'],
-                ]);
-                return response()->json($course, 201);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 405);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 405);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
-            }
-
+        try {
+            $data = $request->json()->all();
+            $dataCourse = $data['course'];
+            $course = Course::findOrFail($dataCourse ['id'])->update([
+                'event_type' => $dataCourse ['event_type'],
+                'institution' => $dataCourse ['institution'],
+                'event_name' => $dataCourse ['event_name'],
+                'start_date' => $dataCourse ['start_date'],
+                'finish_date' => $dataCourse ['finish_date'],
+                'hours' => $dataCourse ['hours'],
+                'type_certification' => $dataCourse ['type_certification'],
+            ]);
+            return response()->json($course, 201);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
     }
 
     function deleteCourse(Request $request)
     {
-
-            try {
-                $course = Course::findOrFail($request->id)->delete();
-                return response()->json($course, 201);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 405);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 405);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
-            }
-
+        try {
+            $course = Course::findOrFail($request->id)->delete();
+            return response()->json($course, 201);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
     }
 }

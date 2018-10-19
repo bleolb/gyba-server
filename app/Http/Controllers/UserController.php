@@ -30,6 +30,8 @@ class UserController extends Controller
                 ->orWhere('email', $dataUser['user_name'])
                 ->join("role_user", "role_user.user_id", "=", "users.id")
                 ->join("roles", "roles.id", "=", "role_user.role_id")
+                ->select('users.id','users.name','users.avatar','users.user_name','users.email','users.password','users.api_token',
+                    'roles.role')
                 ->first();
             if ($user && Hash::check($dataUser['password'], $user->password)) {
                 return response()->json($user, 200);
@@ -47,13 +49,12 @@ class UserController extends Controller
         }
     }
 
-
     function logout(Request $request)
     {
         $data = $request->json()->all();
         $dataUser = $data['user'];
         try {
-            User::where('user_name',$dataUser['user_name'])->update(['api_token' => str_random(60),]);
+            User::where('user_name', $dataUser['user_name'])->update(['api_token' => str_random(60),]);
             return response()->json([], 201);
         } catch (ModelNotFoundException $e) {
             return response()->json($e, 405);
@@ -162,6 +163,7 @@ class UserController extends Controller
                 'identity' => $dataProfessional['identity'],
                 'first_name' => strtoupper($dataProfessional['first_name']),
                 'last_name' => strtoupper($dataProfessional['last_name']),
+                'email' => strtolower($dataProfessional['email']),
                 'nationality' => strtoupper($dataProfessional['nationality']),
                 'civil_status' => strtoupper($dataProfessional['civil_status']),
                 'birthdate' => $dataProfessional['birthdate'],
@@ -202,6 +204,7 @@ class UserController extends Controller
             $user->roles()->attach(2);
             $user->company()->create([
                 'identity' => $dataCompany['identity'],
+                'email' => $dataCompany['email'],
                 'nature' => $dataCompany['nature'],
                 'trade_name' => $dataCompany['trade_name'],
                 'comercial_activity' => $dataCompany['comercial_activity'],

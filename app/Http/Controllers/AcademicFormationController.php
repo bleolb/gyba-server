@@ -3,29 +3,23 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Professional;
-use App\ProfessionalReference;
+use App\AcademicFormation;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
-class ProfessionalReferenceController extends Controller
+class AcademicFormationController extends Controller
 {
-    function getProfessionalReferences(Request $request)
+
+    function getAcademicFormations(Request $request)
     {
         try {
             $professional = Professional::where('user_id', $request->user_id)->first();
             if ($professional) {
-                $professionalReferences = ProfessionalReference::where('professional_id', $professional->id)
+                $academicFormations = AcademicFormation::where('professional_id', $professional->id)
                     ->orderby($request->field, $request->order)
                     ->paginate($request->limit);
-                return response()->json([
-                    'pagination' => [
-                        'total' => $professionalReferences->total(),
-                        'current_page' => $professionalReferences->currentPage(),
-                        'per_page' => $professionalReferences->perPage(),
-                        'last_page' => $professionalReferences->lastPage(),
-                        'from' => $professionalReferences->firstItem(),
-                        'to' => $professionalReferences->lastItem()
-                    ], 'professionalReferences' => $professionalReferences], 200);
             } else {
                 return response()->json([
                     'pagination' => [
@@ -35,8 +29,17 @@ class ProfessionalReferenceController extends Controller
                         'last_page' => 1,
                         'from' => null,
                         'to' => null
-                    ], 'professionalReference' => null], 404);
+                    ], 'academicFormations' => null], 404);
             }
+            return response()->json([
+                'pagination' => [
+                    'total' => $academicFormations->total(),
+                    'current_page' => $academicFormations->currentPage(),
+                    'per_page' => $academicFormations->perPage(),
+                    'last_page' => $academicFormations->lastPage(),
+                    'from' => $academicFormations->firstItem(),
+                    'to' => $academicFormations->lastItem()
+                ], 'academicFormations' => $academicFormations], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json($e, 405);
         } catch (NotFoundHttpException  $e) {
@@ -47,16 +50,14 @@ class ProfessionalReferenceController extends Controller
             return response()->json($e, 500);
         } catch (Error $e) {
             return response()->json($e, 500);
-        } catch (ErrorException $e) {
-            return response()->json($e, 500);
         }
     }
 
-    function showProfessionalReference($id)
+    function showAcademicFormation($id)
     {
         try {
-            $professionalReference = ProfessionalReference::findOrFail($id);
-            return response()->json(['professionalReference' => $professionalReference], 200);
+            $academicFormation = AcademicFormation::findOrFail($id);
+            return response()->json(['academicFormation' => $academicFormation], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json($e, 405);
         } catch (NotFoundHttpException  $e) {
@@ -70,23 +71,23 @@ class ProfessionalReferenceController extends Controller
         }
     }
 
-    function createProfessionalReference(Request $request)
+    function createAcademicFormation(Request $request)
     {
         try {
             $data = $request->json()->all();
             $dataUser = $data['user'];
-            $dataProfessionalReference = $data['professionalReference'];
+            $dataAcademicFormation = $data['academicFormation'];
             $professional = Professional::where('user_id', $dataUser['id'])->first();
-
             if ($professional) {
-                $response = $professional->professionalReferences()->create([
-                    'institution' => $dataProfessionalReference ['institution'],
-                    'position' => $dataProfessionalReference ['position'],
-                    'contact' => $dataProfessionalReference ['contact'],
-                    'phone' => $dataProfessionalReference ['phone'],
+                $response = $professional->academicFormations()->create([
+                    'institution' => $dataAcademicFormation ['institution'],
+                    'career' => $dataAcademicFormation ['career'],
+                    'professional_degree' => $dataAcademicFormation ['professional_degree'],
+                    'registration_date' => $dataAcademicFormation ['registration_date'],
+                    'senescyt_code' => $dataAcademicFormation ['senescyt_code'],
                 ]);
                 return response()->json($response, 201);
-            } else {
+            }else{
                 return response()->json(null, 404);
             }
         } catch (ModelNotFoundException $e) {
@@ -102,18 +103,19 @@ class ProfessionalReferenceController extends Controller
         }
     }
 
-    function updateProfessionalReference(Request $request)
+    function updateAcademicFormation(Request $request)
     {
         try {
             $data = $request->json()->all();
-            $dataProfessionalReference = $data['professionalReference'];
-            $professionalReference = ProfessionalReference::findOrFail($dataProfessionalReference['id'])->update([
-                'institution' => $dataProfessionalReference ['institution'],
-                'position' => $dataProfessionalReference ['position'],
-                'contact' => $dataProfessionalReference ['contact'],
-                'phone' => $dataProfessionalReference ['phone'],
+            $dataAcademicFormation = $data['academicFormation'];
+            $academicFormation = AcademicFormation::findOrFail($dataAcademicFormation ['id'])->update([
+                'institution' => $dataAcademicFormation ['institution'],
+                'career' => $dataAcademicFormation ['career'],
+                'professional_degree' => $dataAcademicFormation ['professional_degree'],
+                'registration_date' => $dataAcademicFormation ['registration_date'],
+                'senescyt_code' => $dataAcademicFormation ['senescyt_code'],
             ]);
-            return response()->json($professionalReference, 201);
+            return response()->json($academicFormation, 201);
         } catch (ModelNotFoundException $e) {
             return response()->json($e, 405);
         } catch (NotFoundHttpException  $e) {
@@ -127,11 +129,11 @@ class ProfessionalReferenceController extends Controller
         }
     }
 
-    function deleteProfessionalReference(Request $request)
+    function deleteAcademicFormation(Request $request)
     {
         try {
-            $professionalReference = ProfessionalReference::findOrFail($request->id)->delete();
-            return response()->json($professionalReference, 201);
+            $academicFormation = AcademicFormation::findOrFail($request->id)->delete();
+            return response()->json($academicFormation, 201);
         } catch (ModelNotFoundException $e) {
             return response()->json($e, 405);
         } catch (NotFoundHttpException  $e) {

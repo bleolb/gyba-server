@@ -19,7 +19,7 @@ class CreateAcademicFormationsTable extends Migration
             $table->string('institution');
             $table->string('career');
             $table->string('professional_degree');
-            $table->dateTime('registration_date');
+            $table->date('registration_date');
             $table->string('senescyt_code');
             $table->timestamps();
         });

@@ -5,27 +5,27 @@ namespace App\Http\Controllers;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Professional;
-use App\ProfessionalReference;
+use App\ProfessionalExperience;
 
-class ProfessionalReferenceController extends Controller
+class ProfessionalExperienceController extends Controller
 {
-    function getProfessionalReferences(Request $request)
+    function getProfessionalExperiences(Request $request)
     {
         try {
             $professional = Professional::where('user_id', $request->user_id)->first();
             if ($professional) {
-                $professionalReferences = ProfessionalReference::where('professional_id', $professional->id)
+                $professionalExperiences = ProfessionalExperience::where('professional_id', $professional->id)
                     ->orderby($request->field, $request->order)
                     ->paginate($request->limit);
                 return response()->json([
                     'pagination' => [
-                        'total' => $professionalReferences->total(),
-                        'current_page' => $professionalReferences->currentPage(),
-                        'per_page' => $professionalReferences->perPage(),
-                        'last_page' => $professionalReferences->lastPage(),
-                        'from' => $professionalReferences->firstItem(),
-                        'to' => $professionalReferences->lastItem()
-                    ], 'professionalReferences' => $professionalReferences], 200);
+                        'total' => $professionalExperiences->total(),
+                        'current_page' => $professionalExperiences->currentPage(),
+                        'per_page' => $professionalExperiences->perPage(),
+                        'last_page' => $professionalExperiences->lastPage(),
+                        'from' => $professionalExperiences->firstItem(),
+                        'to' => $professionalExperiences->lastItem()
+                    ], 'professionalExperiences' => $professionalExperiences], 200);
             } else {
                 return response()->json([
                     'pagination' => [
@@ -35,7 +35,7 @@ class ProfessionalReferenceController extends Controller
                         'last_page' => 1,
                         'from' => null,
                         'to' => null
-                    ], 'professionalReference' => null], 404);
+                    ], 'professionalExperiences' => null], 404);
             }
         } catch (ModelNotFoundException $e) {
             return response()->json($e, 405);
@@ -52,11 +52,11 @@ class ProfessionalReferenceController extends Controller
         }
     }
 
-    function showProfessionalReference($id)
+    function showProfessionalExperience($id)
     {
         try {
-            $professionalReference = ProfessionalReference::findOrFail($id);
-            return response()->json(['professionalReference' => $professionalReference], 200);
+            $professionalExperiences = ProfessionalExperience::findOrFail($id);
+            return response()->json(['professionalExperiences' => $professionalExperiences], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json($e, 405);
         } catch (NotFoundHttpException  $e) {
@@ -70,20 +70,21 @@ class ProfessionalReferenceController extends Controller
         }
     }
 
-    function createProfessionalReference(Request $request)
+    function createProfessionalExperience(Request $request)
     {
         try {
             $data = $request->json()->all();
             $dataUser = $data['user'];
-            $dataProfessionalReference = $data['professionalReference'];
+            $dataProfessionalExperiences = $data['professionalExperience'];
             $professional = Professional::where('user_id', $dataUser['id'])->first();
-
             if ($professional) {
-                $response = $professional->professionalReferences()->create([
-                    'institution' => $dataProfessionalReference ['institution'],
-                    'position' => $dataProfessionalReference ['position'],
-                    'contact' => $dataProfessionalReference ['contact'],
-                    'phone' => $dataProfessionalReference ['phone'],
+                $response = $professional->professionalExperiences()->create([
+                    'employer' => $dataProfessionalExperiences ['employer'],
+                    'position' => $dataProfessionalExperiences ['position'],
+                    'job_description' => $dataProfessionalExperiences ['job_description'],
+                    'start_date' => $dataProfessionalExperiences ['start_date'],
+                    'finish_date' => $dataProfessionalExperiences ['finish_date'],
+                    'reason_leave' => $dataProfessionalExperiences ['reason_leave'],
                 ]);
                 return response()->json($response, 201);
             } else {
@@ -102,18 +103,20 @@ class ProfessionalReferenceController extends Controller
         }
     }
 
-    function updateProfessionalReference(Request $request)
+    function updateProfessionalExperience(Request $request)
     {
         try {
             $data = $request->json()->all();
-            $dataProfessionalReference = $data['professionalReference'];
-            $professionalReference = ProfessionalReference::findOrFail($dataProfessionalReference['id'])->update([
-                'institution' => $dataProfessionalReference ['institution'],
-                'position' => $dataProfessionalReference ['position'],
-                'contact' => $dataProfessionalReference ['contact'],
-                'phone' => $dataProfessionalReference ['phone'],
+            $dataProfessionalExperiences = $data['professionalExperience'];
+            $professionalExperience = ProfessionalExperience::findOrFail($dataProfessionalExperiences ['id'])->update([
+                'employer' => $dataProfessionalExperiences ['employer'],
+                'position' => $dataProfessionalExperiences ['position'],
+                'job_description' => $dataProfessionalExperiences ['job_description'],
+                'start_date' => $dataProfessionalExperiences ['start_date'],
+                'finish_date' => $dataProfessionalExperiences ['finish_date'],
+                'reason_leave' => $dataProfessionalExperiences ['reason_leave'],
             ]);
-            return response()->json($professionalReference, 201);
+            return response()->json($professionalExperience, 201);
         } catch (ModelNotFoundException $e) {
             return response()->json($e, 405);
         } catch (NotFoundHttpException  $e) {
@@ -127,11 +130,11 @@ class ProfessionalReferenceController extends Controller
         }
     }
 
-    function deleteProfessionalReference(Request $request)
+    function deleteProfessionalExperience(Request $request)
     {
         try {
-            $professionalReference = ProfessionalReference::findOrFail($request->id)->delete();
-            return response()->json($professionalReference, 201);
+            $professionalExperience = ProfessionalExperience::findOrFail($request->id)->delete();
+            return response()->json($professionalExperience, 201);
         } catch (ModelNotFoundException $e) {
             return response()->json($e, 405);
         } catch (NotFoundHttpException  $e) {

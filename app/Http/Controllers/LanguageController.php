@@ -9,11 +9,14 @@ use App\Professional;
 
 class LanguageController extends Controller
 {
-    function getAllLanguages(Request $request)
+    function getLanguages(Request $request)
     {
-
-            try {
-                $languages = Language::orderby($request->field, $request->order)->paginate($request->limit);
+        try {
+            $professional = Professional::where('user_id', $request->user_id)->first();
+            if ($professional) {
+                $languages = Language::where('professional_id', $professional->id)
+                    ->orderby($request->field, $request->order)
+                    ->paginate($request->limit);
                 return response()->json([
                     'pagination' => [
                         'total' => $languages->total(),
@@ -23,98 +26,121 @@ class LanguageController extends Controller
                         'from' => $languages->firstItem(),
                         'to' => $languages->lastItem()
                     ], 'languages' => $languages], 200);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 405);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 405);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
+            } else {
+                return response()->json([
+                    'pagination' => [
+                        'total' => 0,
+                        'current_page' => 1,
+                        'per_page' => $request->limit,
+                        'last_page' => 1,
+                        'from' => null,
+                        'to' => null
+                    ], 'languages' => null], 404);
             }
-
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        } catch (ErrorException $e) {
+            return response()->json($e, 500);
+        }
     }
 
     function showLanguage($id)
     {
         try {
             $language = Language::findOrFail($id);
-            return response()->json($language, 200);
+            return response()->json(['language' => $language], 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json('ModelNotFound', 405);
+            return response()->json($e, 405);
         } catch (NotFoundHttpException  $e) {
-            return response()->json('NotFoundHttp', 405);
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
         } catch (Exception $e) {
-            return response()->json('Exception', 500);
+            return response()->json($e, 500);
         } catch (Error $e) {
-            return response()->json('Error', 500);
+            return response()->json($e, 500);
         }
     }
 
     function createLanguage(Request $request)
     {
-
-            try {
-                $data = $request->json()->all();
-                $professional = Professional::findOrFail($request->professional_id);
+        try {
+            $data = $request->json()->all();
+            $dataUser = $data['user'];
+            $dataLanguage = $data['language'];
+            $professional = Professional::where('user_id', $dataUser['id'])->first();
+            if ($professional) {
                 $response = $professional->languages()->create([
-                    'description' => $data['description'],
-                    'written_level' => $data['written_level'],
-                    'spoken_level' => $data['spoken_level'],
-                    'reading_level' => $data['reading_level'],
+                    'description' => $dataLanguage ['description'],
+                    'written_level' => $dataLanguage ['written_level'],
+                    'spoken_level' => $dataLanguage ['spoken_level'],
+                    'reading_level' => $dataLanguage ['reading_level'],
                 ]);
                 return response()->json($response, 201);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 405);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 405);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
+            } else {
+                return response()->json(null, 404);
             }
-
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
     }
 
     function updateLanguage(Request $request)
     {
-
-            try {
-                $data = $request->json()->all();
-                $language = Language::findOrFail($data['id'])->update([
-                    'description' => $data['description'],
-                    'written_level' => $data['written_level'],
-                    'spoken_level' => $data['spoken_level'],
-                    'reading_level' => $data['reading_level'],
-                ]);
-                return response()->json($language, 201);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 405);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 405);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
-            }
-
+        try {
+            $data = $request->json()->all();
+            $dataLanguage = $data['language'];
+            $language = Language::findOrFail($dataLanguage ['id'])->update([
+                'description' => $dataLanguage ['description'],
+                'written_level' => $dataLanguage ['written_level'],
+                'spoken_level' => $dataLanguage ['spoken_level'],
+                'reading_level' => $dataLanguage ['reading_level'],
+            ]);
+            return response()->json($language, 201);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
     }
 
     function deleteLanguage(Request $request)
     {
-
-            try {
-                $language = Language::findOrFail($request->id)->delete();
-                return response()->json($language, 201);
-            } catch (ModelNotFoundException $e) {
-                return response()->json('ModelNotFound', 405);
-            } catch (NotFoundHttpException  $e) {
-                return response()->json('NotFoundHttp', 405);
-            } catch (Exception $e) {
-                return response()->json('Exception', 500);
-            } catch (Error $e) {
-                return response()->json('Error', 500);
-            }
-
+        try {
+            $language = Language::findOrFail($request->id)->delete();
+            return response()->json($language, 201);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
     }
 }

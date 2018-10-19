@@ -108,66 +108,54 @@ class ProfessionalController extends Controller
     }
 
     /* Metodos para gestionar los datos personales*/
-    function createProfessional(Request $request)
+
+    function showProfessional($id)
     {
-
         try {
-            $data = $request->json()->all();
-            $professional = Professional::create([
-                'identity' => $data['identity'],
-                'first_name' => $data['first_name'],
-                'last_name' => $data['last_name'],
-                'nationality' => $data['nationality'],
-                'civil_status' => $data['civil_status'],
-                'birthdate' => $data['birthdate'],
-                'gender' => $data['gender'],
-                'phone' => $data['phone'],
-                'cell_phone' => $data['cell_phone'],
-                'address' => $data['address'],
-                'about_me' => $data['about_me'],
-            ]);
-            return response()->json($professional, 201);
+            $professional = Professional::where('user_id', $id)->first();
+            return response()->json(['professional' => $professional], 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json('ModelNotFound', 405);
+            return response()->json($e, 405);
         } catch (NotFoundHttpException  $e) {
-            return response()->json('NotFoundHttp', 405);
+            return response()->json($e, 405);
+        } catch (QueryException  $e) {
+            return response()->json($e, 405);
         } catch (Exception $e) {
-            return response()->json('Exception', 500);
+            return response()->json($e, 500);
         } catch (Error $e) {
-            return response()->json('Error', 500);
+            return response()->json($e, 500);
         }
-
     }
 
     function updateProfessional(Request $request)
     {
-
         try {
             $data = $request->json()->all();
-            $professional = Professional::find($data['id'])->update([
-                'identity' => $data['name'],
-                'first_name' => $data['first_name'],
-                'last_name' => $data['last_name'],
-                'nationality' => $data['nationality'],
-                'civil_status' => $data['civil_status'],
-                'birthdate' => $data['birthdate'],
-                'gender' => $data['gender'],
-                'phone' => $data['phone'],
-                'cell_phone' => $data['cell_phone'],
-                'address' => $data['address'],
-                'about_me' => $data['web_page'],
+            $dataProfessional = $data['professional'];
+            $professional = Professional::findOrFail($dataProfessional['id'])->update([
+                'identity' => $dataProfessional['identity'],
+                'first_name' => $dataProfessional['first_name'],
+                'last_name' => $dataProfessional['last_name'],
+                'nationality' => $dataProfessional['nationality'],
+                'civil_status' => $dataProfessional['civil_status'],
+                'birthdate' => $dataProfessional['birthdate'],
+                'gender' => $dataProfessional['gender'],
+                'phone' => $dataProfessional['phone'],
+                'address' => $dataProfessional['address'],
+                'about_me' => $dataProfessional['about_me'],
             ]);
             return response()->json($professional, 201);
         } catch (ModelNotFoundException $e) {
             return response()->json('ModelNotFound', 405);
         } catch (NotFoundHttpException  $e) {
             return response()->json('NotFoundHttp', 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 500);
         } catch (Exception $e) {
-            return response()->json('Exception', 500);
+            return response()->json($e, 500);
         } catch (Error $e) {
-            return response()->json('Error', 500);
+            return response()->json($e, 500);
         }
-
     }
 
     function deleteProfessional(Request $request)

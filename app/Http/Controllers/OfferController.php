@@ -12,6 +12,13 @@ class OfferController extends Controller
 
     function getAllOffers(Request $request)
     {
+        $offers = Offer::get();
+        return response()->json(['offers' => $offers], 200);
+
+    }
+
+    function getOffers(Request $request)
+    {
         $offers = Offer::orderby($request->field, $request->order)->paginate($request->limit);
         return response()->json([
             'pagination' => [
