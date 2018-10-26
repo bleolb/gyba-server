@@ -19,9 +19,10 @@ class CreateProfessionalExperiencesTable extends Migration
             $table->string('employer');
             $table->string('position');
             $table->string('job_description');
-            $table->dateTime('start_date');
-            $table->dateTime('finish_date');
+            $table->date('start_date');
+            $table->date('finish_date')->nullable();
             $table->string('reason_leave');
+            $table->boolean('current_work')->nullable();
             $table->timestamps();
         });
     }

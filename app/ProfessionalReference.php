@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ProfessionalReference extends Model
+    class ProfessionalReference extends Model
 {
 
 
@@ -18,6 +18,7 @@ class ProfessionalReference extends Model
         'position',
         'contact',
         'phone',
+
     ];
 
     public function profsesional()

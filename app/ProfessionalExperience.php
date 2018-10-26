@@ -20,6 +20,7 @@ class ProfessionalExperience extends Model
         'start_date',
         'finish_date',
         'reason_leave',
+        'current_work',
     ];
 
     public function profsesional()

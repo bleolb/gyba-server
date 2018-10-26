@@ -78,13 +78,26 @@ class LanguageController extends Controller
             $dataLanguage = $data['language'];
             $professional = Professional::where('user_id', $dataUser['id'])->first();
             if ($professional) {
-                $response = $professional->languages()->create([
-                    'description' => $dataLanguage ['description'],
-                    'written_level' => $dataLanguage ['written_level'],
-                    'spoken_level' => $dataLanguage ['spoken_level'],
-                    'reading_level' => $dataLanguage ['reading_level'],
-                ]);
-                return response()->json($response, 201);
+                $language = Language::where('description', $dataLanguage['description'])
+                    ->where('professional_id', $professional['id'])
+                    ->first();
+                if (!$language) {
+                    $response = $professional->languages()->create([
+                        'description' => $dataLanguage ['description'],
+                        'written_level' => $dataLanguage ['written_level'],
+                        'spoken_level' => $dataLanguage ['spoken_level'],
+                        'reading_level' => $dataLanguage ['reading_level'],
+                    ]);
+                    return response()->json($response, 201);
+                } else {
+                    return response()->json([
+                        'errorInfo' => [
+                            '0' => '23505',
+                            '1' => '7',
+                            '2' => 'ERROR:  llave duplicada viola restricción de unicidad «languages_description_unique»',
+                        ]], 409);
+                }
+
             } else {
                 return response()->json(null, 404);
             }
@@ -93,7 +106,9 @@ class LanguageController extends Controller
         } catch (NotFoundHttpException  $e) {
             return response()->json($e, 405);
         } catch (QueryException $e) {
-            return response()->json($e, 400);
+            return response()->json($e, 409);
+        } catch (\PDOException $e) {
+            return response()->json($e, 409);
         } catch (Exception $e) {
             return response()->json($e, 500);
         } catch (Error $e) {

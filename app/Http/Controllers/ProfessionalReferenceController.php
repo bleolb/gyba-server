@@ -80,9 +80,9 @@ class ProfessionalReferenceController extends Controller
 
             if ($professional) {
                 $response = $professional->professionalReferences()->create([
-                    'institution' => $dataProfessionalReference ['institution'],
-                    'position' => $dataProfessionalReference ['position'],
-                    'contact' => $dataProfessionalReference ['contact'],
+                    'institution' => strtoupper($dataProfessionalReference ['institution']),
+                    'position' => strtoupper($dataProfessionalReference ['position']),
+                    'contact' => strtoupper($dataProfessionalReference ['contact']),
                     'phone' => $dataProfessionalReference ['phone'],
                 ]);
                 return response()->json($response, 201);
@@ -108,9 +108,9 @@ class ProfessionalReferenceController extends Controller
             $data = $request->json()->all();
             $dataProfessionalReference = $data['professionalReference'];
             $professionalReference = ProfessionalReference::findOrFail($dataProfessionalReference['id'])->update([
-                'institution' => $dataProfessionalReference ['institution'],
-                'position' => $dataProfessionalReference ['position'],
-                'contact' => $dataProfessionalReference ['contact'],
+                'institution' => strtoupper($dataProfessionalReference ['institution']),
+                'position' => strtoupper($dataProfessionalReference ['position']),
+                'contact' => strtoupper($dataProfessionalReference ['contact']),
                 'phone' => $dataProfessionalReference ['phone'],
             ]);
             return response()->json($professionalReference, 201);

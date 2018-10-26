@@ -80,8 +80,8 @@ class CourseController extends Controller
             if ($professional) {
                 $response = $professional->courses()->create([
                     'event_type' => $dataCourse ['event_type'],
-                    'institution' => $dataCourse ['institution'],
-                    'event_name' => $dataCourse ['event_name'],
+                    'institution' => strtoupper($dataCourse ['institution']),
+                    'event_name' => strtoupper($dataCourse ['event_name']),
                     'start_date' => $dataCourse ['start_date'],
                     'finish_date' => $dataCourse ['finish_date'],
                     'hours' => $dataCourse ['hours'],

@@ -79,12 +79,13 @@ class ProfessionalExperienceController extends Controller
             $professional = Professional::where('user_id', $dataUser['id'])->first();
             if ($professional) {
                 $response = $professional->professionalExperiences()->create([
-                    'employer' => $dataProfessionalExperiences ['employer'],
-                    'position' => $dataProfessionalExperiences ['position'],
-                    'job_description' => $dataProfessionalExperiences ['job_description'],
+                    'employer' => strtoupper($dataProfessionalExperiences ['employer']),
+                    'position' => strtoupper($dataProfessionalExperiences ['position']),
+                    'job_description' => strtoupper($dataProfessionalExperiences ['job_description']),
                     'start_date' => $dataProfessionalExperiences ['start_date'],
                     'finish_date' => $dataProfessionalExperiences ['finish_date'],
-                    'reason_leave' => $dataProfessionalExperiences ['reason_leave'],
+                    'reason_leave' => strtoupper($dataProfessionalExperiences ['reason_leave']),
+                    'current_work' => $dataProfessionalExperiences ['current_work'],
                 ]);
                 return response()->json($response, 201);
             } else {
@@ -109,12 +110,13 @@ class ProfessionalExperienceController extends Controller
             $data = $request->json()->all();
             $dataProfessionalExperiences = $data['professionalExperience'];
             $professionalExperience = ProfessionalExperience::findOrFail($dataProfessionalExperiences ['id'])->update([
-                'employer' => $dataProfessionalExperiences ['employer'],
-                'position' => $dataProfessionalExperiences ['position'],
-                'job_description' => $dataProfessionalExperiences ['job_description'],
+                'employer' => strtoupper($dataProfessionalExperiences ['employer']),
+                'position' => strtoupper($dataProfessionalExperiences ['position']),
+                'job_description' => strtoupper($dataProfessionalExperiences ['job_description']),
                 'start_date' => $dataProfessionalExperiences ['start_date'],
                 'finish_date' => $dataProfessionalExperiences ['finish_date'],
-                'reason_leave' => $dataProfessionalExperiences ['reason_leave'],
+                'reason_leave' => strtoupper($dataProfessionalExperiences ['reason_leave']),
+                'current_work' => $dataProfessionalExperiences ['current_work'],
             ]);
             return response()->json($professionalExperience, 201);
         } catch (ModelNotFoundException $e) {

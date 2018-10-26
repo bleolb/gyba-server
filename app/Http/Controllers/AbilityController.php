@@ -77,13 +77,25 @@ class AbilityController extends Controller
             $dataUser = $data['user'];
             $dataAbility = $data['ability'];
             $professional = Professional::where('user_id', $dataUser['id'])->first();
-            if($professional){
-            $response = $professional->abilities()->create([
-                'category' => $dataAbility ['category'],
-                'description' => $dataAbility ['description'],
-            ]);
-            return response()->json($response, 201);
-            }else{
+            if ($professional) {
+                $ability = Ability::where('category', $dataAbility['category'])
+                    ->where('professional_id', $professional['id'])
+                    ->first();
+                if (!$ability) {
+                    $response = $professional->abilities()->create([
+                        'category' => $dataAbility ['category'],
+                        'description' => strtoupper($dataAbility ['description']),
+                    ]);
+                    return response()->json($response, 201);
+                } else {
+                    return response()->json([
+                        'errorInfo' => [
+                            '0' => '23505',
+                            '1' => '7',
+                            '2' => 'ERROR:  llave duplicada viola restricción de unicidad «languages_description_unique»',
+                        ]], 409);
+                }
+            } else {
                 return response()->json(null, 404);
             }
         } catch (ModelNotFoundException $e) {
@@ -106,7 +118,7 @@ class AbilityController extends Controller
             $dataAbility = $data['ability'];
             $ability = Ability::findOrFail($dataAbility ['id'])->update([
                 'category' => $dataAbility ['category'],
-                'description' => $dataAbility ['description'],
+                'description' => strtoupper($dataAbility ['description']),
             ]);
             return response()->json($ability, 201);
         } catch (ModelNotFoundException $e) {
