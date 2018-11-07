@@ -15,6 +15,7 @@ class AbilityController extends Controller
             $professional = Professional::where('user_id', $request->user_id)->first();
             if ($professional) {
                 $abilities = Ability::where('professional_id', $professional->id)
+                    ->where('state', '<>', 'DELETED')
                     ->orderby($request->field, $request->order)
                     ->paginate($request->limit);
                 return response()->json([
@@ -70,6 +71,14 @@ class AbilityController extends Controller
         }
     }
 
+    function validateDuplicate($dataAbility, $professional)
+    {
+        return Ability::where('category', $dataAbility['category'])
+            ->where('professional_id', $professional['id'])
+            ->where('state', '<>', 'DELETED')
+            ->first();
+    }
+
     function createAbility(Request $request)
     {
         try {
@@ -78,10 +87,7 @@ class AbilityController extends Controller
             $dataAbility = $data['ability'];
             $professional = Professional::where('user_id', $dataUser['id'])->first();
             if ($professional) {
-                $ability = Ability::where('category', $dataAbility['category'])
-                    ->where('professional_id', $professional['id'])
-                    ->first();
-                if (!$ability) {
+                if (!$this->validateDuplicate($dataAbility, $professional)) {
                     $response = $professional->abilities()->create([
                         'category' => $dataAbility ['category'],
                         'description' => strtoupper($dataAbility ['description']),
@@ -137,7 +143,9 @@ class AbilityController extends Controller
     function deleteAbility(Request $request)
     {
         try {
-            $ability = Ability::findOrFail($request->id)->delete();
+            $ability = Ability::findOrFail($request->id)->update([
+                'state' => 'DELETED',
+            ]);
             return response()->json($ability, 201);
         } catch (ModelNotFoundException $e) {
             return response()->json($e, 405);

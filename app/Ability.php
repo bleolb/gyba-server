@@ -16,6 +16,7 @@ class Ability extends Model
     protected $fillable = [
         'category',
         'description',
+        'state',
     ];
 
     public function profsesional()

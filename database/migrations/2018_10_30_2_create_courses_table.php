@@ -16,6 +16,7 @@ class CreateCoursesTable extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('professional_id')->unsigned();
+            $table->foreign('professional_id')->references('id')->on('professionals');
             $table->string('event_type');
             $table->string('institution');
             $table->string('event_name');
@@ -23,6 +24,7 @@ class CreateCoursesTable extends Migration
             $table->date('finish_date');
             $table->string('hours');
             $table->string('type_certification');
+            $table->string('state')->default('ACTIVE');
             $table->timestamps();
         });
     }

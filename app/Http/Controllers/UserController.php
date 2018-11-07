@@ -11,16 +11,6 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function prueba()
-    {
-        $users = User::where('user_name', '1724909443')
-            ->join("role_user", "role_user.user_id", "=", "users.id")
-            ->join("roles", "roles.id", "=", "role_user.role_id")
-            ->first();
-        return response()->json($users, 200);
-
-    }
-
     public function login(Request $request)
     {
         try {
@@ -30,7 +20,7 @@ class UserController extends Controller
                 ->orWhere('email', $dataUser['user_name'])
                 ->join("role_user", "role_user.user_id", "=", "users.id")
                 ->join("roles", "roles.id", "=", "role_user.role_id")
-                ->select('users.id','users.name','users.avatar','users.user_name','users.email','users.password','users.api_token',
+                ->select('users.id', 'users.name', 'users.avatar', 'users.user_name', 'users.email', 'users.password', 'users.api_token',
                     'roles.role')
                 ->first();
             if ($user && Hash::check($dataUser['password'], $user->password)) {
@@ -165,7 +155,7 @@ class UserController extends Controller
                 'last_name' => strtoupper($dataProfessional['last_name']),
                 'email' => strtolower($dataProfessional['email']),
                 'nationality' => strtoupper($dataProfessional['nationality']),
-                'civil_status' => strtoupper($dataProfessional['civil_status']),
+                'civil_state' => strtoupper($dataProfessional['civil_state']),
                 'birthdate' => $dataProfessional['birthdate'],
                 'gender' => strtoupper($dataProfessional['gender']),
                 'phone' => $dataProfessional['phone'],
@@ -266,6 +256,27 @@ class UserController extends Controller
         } catch (Error $e) {
             return response()->json('Error', 500);
         }
+    }
+
+    function updatePassword(Request $request)
+    {
+        try {
+            $data = $request->json()->all();
+            $dataUser = $data['user'];
+            $user = User::findOrFail($dataUser['id'])->update([
+                'password' => Hash::make($dataUser['password']),
+            ]);
+            return response()->json($user, 201);
+        } catch (ModelNotFoundException $e) {
+            return response()->json('ModelNotFound', 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json('NotFoundHttp', 405);
+        } catch (Exception $e) {
+            return response()->json('Exception', 500);
+        } catch (Error $e) {
+            return response()->json('Error', 500);
+        }
+
     }
 }
 

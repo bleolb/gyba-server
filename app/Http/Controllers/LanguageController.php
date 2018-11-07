@@ -15,6 +15,7 @@ class LanguageController extends Controller
             $professional = Professional::where('user_id', $request->user_id)->first();
             if ($professional) {
                 $languages = Language::where('professional_id', $professional->id)
+                    ->where('state', 'ACTIVE')
                     ->orderby($request->field, $request->order)
                     ->paginate($request->limit);
                 return response()->json([

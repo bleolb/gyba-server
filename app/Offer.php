@@ -15,7 +15,6 @@ class Offer extends Model
      * @var array
      */
 
-
     protected $fillable = [
         'code',
         'contact',
@@ -37,7 +36,7 @@ class Offer extends Model
         'finish_date',
         'city',
         'province',
-        'status',
+        'state',
     ];
 
     public function company()

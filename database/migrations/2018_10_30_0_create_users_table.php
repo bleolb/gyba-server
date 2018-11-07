@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('avatar')->nullable();
             $table->string('api_token', 60)->unique();
+            $table->string('state')->default('ACTIVE');
             $table->timestamps();
         });
     }

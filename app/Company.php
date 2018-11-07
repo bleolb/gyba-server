@@ -23,6 +23,7 @@ class Company extends Model
         'cell_phone',
         'web_page',
         'address',
+        'state',
     ];
 
     public function offers()

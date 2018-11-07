@@ -16,17 +16,19 @@ class CreateProfessionalsTable extends Migration
         Schema::create('professionals', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->string('identity')->nullable();
-            $table->string('email')->nullable();
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
-            $table->string('nationality')->nullable();
-            $table->string('civil_status')->nullable();
-            $table->date('birthdate')->nullable();
-            $table->string('gender')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('address')->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->string('identity');
+            $table->string('email');
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('nationality');
+            $table->string('civil_state');
+            $table->date('birthdate');
+            $table->string('gender');
+            $table->string('phone');
+            $table->string('address');
             $table->string('about_me')->nullable();
+            $table->string('state')->default('ACTIVE');
             $table->timestamps();
         });
     }

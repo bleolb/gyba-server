@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Professional;
-use App\Language;
+use Illuminate\Support\Facades\DB;
 use App\Offer;
 use Illuminate\Http\Request;
 Use Exception;
@@ -38,21 +38,48 @@ class ProfessionalController extends Controller
     }
 
     /* Metodo para obtener todas las ofertas a las que aplico el profesional*/
-    function getAllOffers(Request $request)
+    function getAppliedOffers(Request $request)
     {
-
         try {
-            $professional = Professional::findOrFail($request->professional_id);
-            $offers = $professional->offers;
-            return response()->json($offers, 200);
+            $professional = Professional::where('user_id', $request->user_id)->first();
+            if ($professional) {
+                $offers = DB::table('offers')
+                    ->join('offer_professional', 'offer_professional.offer_id', '=', 'offers.id')
+                    ->where('offer_professional.professional_id', $professional->id)
+                    ->where('offer_professional.state', 'ACTIVE')
+                    ->orWhere('offer_professional.state', 'FINISHED')
+                    ->orderby('offer_professional.' . $request->field, $request->order)
+                    ->paginate($request->limit);
+                return response()->json([
+                    'pagination' => [
+                        'total' => $offers->total(),
+                        'current_page' => $offers->currentPage(),
+                        'per_page' => $offers->perPage(),
+                        'last_page' => $offers->lastPage(),
+                        'from' => $offers->firstItem(),
+                        'to' => $offers->lastItem()
+                    ], 'offers' => $offers], 200);
+            } else {
+                return response()->json([
+                    'pagination' => [
+                        'total' => 0,
+                        'current_page' => 1,
+                        'per_page' => $request->limit,
+                        'last_page' => 1,
+                        'from' => null,
+                        'to' => null
+                    ], 'offers' => null], 404);
+            }
         } catch (ModelNotFoundException $e) {
-            return response()->json("ModelNotFoundException", 204);
-        } catch (NotFoundHttpException $e) {
-            return response()->json("NotFoundHttpException", 204);
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
         } catch (Exception $e) {
-            return response()->json("Exception", 500);
+            return response()->json($e, 500);
         } catch (Error $e) {
-            return response()->json("Error", 500);
+            return response()->json($e, 500);
         }
 
     }
@@ -109,6 +136,14 @@ class ProfessionalController extends Controller
 
     /* Metodos para gestionar los datos personales*/
 
+    function getAllProfessionals()
+    {
+        $offers = Offer::where('state', 'ACTIVE')
+            ->get();
+        return response()->json(['offers' => $offers], 200);
+
+    }
+
     function showProfessional($id)
     {
         try {
@@ -137,7 +172,7 @@ class ProfessionalController extends Controller
                 'first_name' => $dataProfessional['first_name'],
                 'last_name' => $dataProfessional['last_name'],
                 'nationality' => $dataProfessional['nationality'],
-                'civil_status' => $dataProfessional['civil_status'],
+                'civil_state' => $dataProfessional['civil_state'],
                 'birthdate' => $dataProfessional['birthdate'],
                 'gender' => $dataProfessional['gender'],
                 'phone' => $dataProfessional['phone'],

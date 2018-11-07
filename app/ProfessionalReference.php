@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
         'position',
         'contact',
         'phone',
-
+        'state',
     ];
 
     public function profsesional()

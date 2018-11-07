@@ -18,6 +18,7 @@ class Language extends Model
         'written_level',
         'spoken_level',
         'reading_level',
+        'state',
     ];
 
     public function profsesional()

@@ -2,21 +2,67 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use App\Company;
 use App\Offer;
 use App\Professional;
-use App\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
+    function getAppliedProfessionals(Request $request)
+    {
+        try {
+            $professional = Professional::where('user_id', $request->user_id)->first();
+            if ($professional) {
+                $companies = DB::table('companies')
+                    ->join('company_professional', 'company_professional.company_id', '=', 'companies.id')
+                    ->where('company_professional.professional_id', $professional->id)
+                    ->where('company_professional.state', 'ACTIVE')
+//                    ->orWhere('offer_professional.state', 'FINISHED')
+                    ->orderby('company_professional.' . $request->field, $request->order)
+                    ->paginate($request->limit);
+                return response()->json([
+                    'pagination' => [
+                        'total' => $companies->total(),
+                        'current_page' => $companies->currentPage(),
+                        'per_page' => $companies->perPage(),
+                        'last_page' => $companies->lastPage(),
+                        'from' => $companies->firstItem(),
+                        'to' => $companies->lastItem()
+                    ], 'companies' => $companies], 200);
+            } else {
+                return response()->json([
+                    'pagination' => [
+                        'total' => 0,
+                        'current_page' => 1,
+                        'per_page' => $request->limit,
+                        'last_page' => 1,
+                        'from' => null,
+                        'to' => null
+                    ], 'companies' => null], 404);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
+
+    }
+
     function getOffers(Request $request)
     {
         try {
             $company = Company::where('user_id', $request->id)->first();
             $offers = $company->offers()
-                ->where('status', '1')
+                ->where('state', 'ACTIVE')
                 ->orderby($request->field, $request->order)
                 ->paginate($request->limit);
             return response()->json([
@@ -104,6 +150,14 @@ class CompanyController extends Controller
 
     }
 
+    function getAllProfessionals()
+    {
+        $offers = Offer::where('state', 'ACTIVE')
+            ->get();
+        return response()->json(['offers' => $offers], 200);
+
+    }
+
     function showCompany($id)
     {
         try {
@@ -130,13 +184,13 @@ class CompanyController extends Controller
             $dataCompany = $data['company'];
             $company = Company::where('user_id', $dataCompany['id'])->first();
             $response = $company->offers()->create([
-                'code' => $dataOffer ['code'],
-                'contact' => $dataOffer ['contact'],
-                'email' => $dataOffer ['email'],
+                'code' => strtoupper($dataOffer ['code']),
+                'contact' => strtoupper($dataOffer ['contact']),
+                'email' => strtolower($dataOffer ['email']),
                 'phone' => $dataOffer ['phone'],
                 'cell_phone' => $dataOffer ['cell_phone'],
                 'contract_type' => $dataOffer ['contract_type'],
-                'position' => $dataOffer ['position'],
+                'position' => strtoupper($dataOffer ['position']),
                 'broad_field' => $dataOffer ['broad_field'],
                 'specific_field' => $dataOffer ['specific_field'],
                 'training_hours' => $dataOffer ['training_hours'],
@@ -146,8 +200,8 @@ class CompanyController extends Controller
                 'number_jobs' => $dataOffer ['number_jobs'],
                 'start_date' => $dataOffer ['start_date'],
                 'finish_date' => $dataOffer ['finish_date'],
-                'activities' => $dataOffer ['activities'],
-                'aditional_information' => $dataOffer ['aditional_information'],
+                'activities' => strtoupper($dataOffer ['activities']),
+                'aditional_information' => strtoupper($dataOffer ['aditional_information']),
                 'province' => $dataOffer ['province'],
                 'city' => $dataOffer ['city'],
             ]);
@@ -171,13 +225,13 @@ class CompanyController extends Controller
             $data = $request->json()->all();
             $dataOffer = $data['offer'];
             $response = Offer::findOrFail($dataOffer['id'])->update([
-                'code' => $dataOffer ['code'],
-                'contact' => $dataOffer ['contact'],
-                'email' => $dataOffer ['email'],
+                'code' => strtoupper($dataOffer ['code']),
+                'contact' => strtoupper($dataOffer ['contact']),
+                'email' => strtolower($dataOffer ['email']),
                 'phone' => $dataOffer ['phone'],
                 'cell_phone' => $dataOffer ['cell_phone'],
                 'contract_type' => $dataOffer ['contract_type'],
-                'position' => $dataOffer ['position'],
+                'position' => strtoupper($dataOffer ['position']),
                 'broad_field' => $dataOffer ['broad_field'],
                 'specific_field' => $dataOffer ['specific_field'],
                 'training_hours' => $dataOffer ['training_hours'],
@@ -187,8 +241,8 @@ class CompanyController extends Controller
                 'number_jobs' => $dataOffer ['number_jobs'],
                 'start_date' => $dataOffer ['start_date'],
                 'finish_date' => $dataOffer ['finish_date'],
-                'activities' => $dataOffer ['activities'],
-                'aditional_information' => $dataOffer ['aditional_information'],
+                'activities' => strtoupper($dataOffer ['activities']),
+                'aditional_information' => strtoupper($dataOffer ['aditional_information']),
                 'province' => $dataOffer ['province'],
                 'city' => $dataOffer ['city'],
             ]);

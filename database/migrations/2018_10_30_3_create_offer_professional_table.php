@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAbilitiesTable extends Migration
+class CreateOfferProfessionalTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,13 @@ class CreateAbilitiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('abilities', function (Blueprint $table) {
+        Schema::create('offer_professional', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('offer_id')->unsigned();
+            $table->foreign('offer_id')->references('id')->on('offers');
             $table->integer('professional_id')->unsigned();
-            $table->string('category');
-            $table->string('description');
+            $table->foreign('professional_id')->references('id')->on('professionals');
+            $table->string('state')->default('ACTIVE');
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ class CreateAbilitiesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('abilities');
+        Schema::dropIfExists('offer_professional');
     }
 }

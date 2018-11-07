@@ -17,12 +17,13 @@ class Professional extends Model
         'last_name',
         'email',
         'nationality',
-        'civil_status',
+        'civil_state',
         'birthdate',
         'gender',
         'phone',
         'address',
         'about_me',
+        'state',
     ];
 
     public function offers()

@@ -16,11 +16,13 @@ class CreateAcademicFormationsTable extends Migration
         Schema::create('academic_formations', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('professional_id')->unsigned();
+            $table->foreign('professional_id')->references('id')->on('professionals');
             $table->string('institution');
             $table->string('career');
             $table->string('professional_degree');
             $table->date('registration_date');
             $table->string('senescyt_code');
+            $table->string('state')->default('ACTIVE');
             $table->timestamps();
         });
     }

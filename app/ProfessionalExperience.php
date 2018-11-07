@@ -21,6 +21,7 @@ class ProfessionalExperience extends Model
         'finish_date',
         'reason_leave',
         'current_work',
+        'state',
     ];
 
     public function profsesional()

@@ -11,6 +11,7 @@
 |
 */
 
+// User
 $factory->define(App\User::class, function (Faker\Generator $faker) {
     static $password;
     return [
@@ -21,55 +22,76 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'api_token' => str_random(60)];
 });
 
+// Role
 $factory->define(App\Role::class, function (Faker\Generator $faker) {
-
     return [
-
         'description' => $faker->text(rand(32, 10)),
-        'role' => 1
+        'role' => '1',
+        'state' => 'ACTIVE',
     ];
 });
 
+// Professional
 $factory->define(App\Professional::class, function (Faker\Generator $faker) {
     return [
+        'identity' => str_random(10),
         'first_name' => str_random(10),
         'last_name' => str_random(10),
         'email' => $faker->unique()->safeEmail,
+        'nationality' => str_random(10),
+        'civil_state' => str_random(10),
+        'birthdate' => '2018-10-01',
+        'gender' => str_random(10),
+        'phone' => str_random(10),
+        'address' => str_random(10),
+        'state' => str_random(10),
         'user_id' => function () {
             return factory(App\User::class)->create()->id;
         }
     ];
 });
-
+// Company
 $factory->define(App\Company::class, function (Faker\Generator $faker) {
     return [
         'identity' => $faker->text(rand(32, 10)),
         'nature' => $faker->text(rand(32, 10)),
-        'email' => $faker->unique()->safeEmail,
-        'cell_phone' => $faker->text(rand(32, 10)),
-        'phone' => $faker->text(rand(32, 10)),
         'trade_name' => $faker->text(rand(32, 10)),
+        'email' => $faker->unique()->safeEmail,
         'comercial_activity' => $faker->text(rand(32, 10)),
+        'phone' => $faker->text(rand(32, 10)),
+        'cell_phone' => $faker->text(rand(32, 10)),
+        'address' => $faker->text(rand(32, 10)),
+        'state' => 'ACTIVE',
         'user_id' => function () {
             return factory(App\User::class)->create()->id;
         }
     ];
 });
 
+// Offer
 $factory->define(App\Offer::class, function (Faker\Generator $faker) {
     return [
         'code' => $faker->text(rand(32, 10)),
+        'contact' => $faker->text(rand(32, 10)),
+        'email' => $faker->text(rand(32, 10)),
+        'phone' => $faker->text(rand(32, 10)),
+        'cell_phone' => $faker->text(rand(32, 10)),
+        'contract_type' => $faker->text(rand(32, 10)),
         'position' => $faker->text(rand(32, 10)),
-        'city' => $faker->text(rand(32, 10)),
-        'province' => $faker->text(rand(32, 10)),
         'broad_field' => 'EDUCACIÓN',
         'specific_field' => 'ASISTENTE PEDAGÓGICO CON NIVEL EQUIVALENTE A TECNÓLOGO SUPERIOR',
+        'training_hours' => $faker->text(rand(32, 10)),
         'remuneration' => $faker->text(rand(32, 10)),
         'working_day' => $faker->text(rand(32, 10)),
+        'number_jobs' => $faker->text(rand(32, 10)),
+        'experience_time' => $faker->text(rand(32, 10)),
         'activities' => $faker->text(rand(400, 300)),
         'start_date' => $faker->dateTimeThisMonth()->format('Y-m-d'),
         'finish_date' => $faker->dateTimeThisMonth()->format('Y-m-d'),
-        'status' => '1',
+        'aditional_information' => $faker->text(rand(400, 300)),
+        'province' => $faker->text(rand(32, 10)),
+        'city' => $faker->text(rand(32, 10)),
+        'state' => 'ACTIVE',
         'company_id' => function () {
             return factory(App\Company::class)->create()->id;
         }

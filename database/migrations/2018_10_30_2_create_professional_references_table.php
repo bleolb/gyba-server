@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLanguagesTable extends Migration
+class CreateProfessionalReferencesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,15 @@ class CreateLanguagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('languages', function (Blueprint $table) {
+        Schema::create('professional_references', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('professional_id')->unsigned();
-            $table->string('description');
-            $table->string('written_level');
-            $table->string('spoken_level');
-            $table->string('reading_level');
+            $table->foreign('professional_id')->references('id')->on('professionals');
+            $table->string('institution');
+            $table->string('position');
+            $table->string('contact');
+            $table->string('phone');
+            $table->string('state')->default('ACTIVE');
             $table->timestamps();
         });
     }
@@ -31,6 +33,6 @@ class CreateLanguagesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('languages');
+        Schema::dropIfExists('professional_references');
     }
 }

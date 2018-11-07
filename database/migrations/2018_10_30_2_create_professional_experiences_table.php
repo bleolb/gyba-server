@@ -16,6 +16,7 @@ class CreateProfessionalExperiencesTable extends Migration
         Schema::create('professional_experiences', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('professional_id')->unsigned();
+            $table->foreign('professional_id')->references('id')->on('professionals');
             $table->string('employer');
             $table->string('position');
             $table->string('job_description');
@@ -23,6 +24,7 @@ class CreateProfessionalExperiencesTable extends Migration
             $table->date('finish_date')->nullable();
             $table->string('reason_leave');
             $table->boolean('current_work')->nullable();
+            $table->string('state')->default('ACTIVE');
             $table->timestamps();
         });
     }

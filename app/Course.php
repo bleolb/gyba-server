@@ -21,6 +21,7 @@ class Course extends Model
         'finish_date',
         'hours',
         'type_certification',
+        'state',
     ];
 
     public function profsesional()
