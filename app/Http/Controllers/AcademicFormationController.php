@@ -11,11 +11,10 @@ use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class AcademicFormationController extends Controller
 {
-
     function getAcademicFormations(Request $request)
     {
         try {
-            $professional = Professional::where('user_id', $request->user_id)->first();
+            $professional = Professional::where('id', $request->user_id)->first();
             if ($professional) {
                 $academicFormations = AcademicFormation::where('professional_id', $professional->id)
                     ->where('state', 'ACTIVE')
@@ -88,7 +87,7 @@ class AcademicFormationController extends Controller
                     'senescyt_code' => $dataAcademicFormation ['senescyt_code'],
                 ]);
                 return response()->json($response, 201);
-            }else{
+            } else {
                 return response()->json(null, 404);
             }
         } catch (ModelNotFoundException $e) {

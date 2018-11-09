@@ -14,7 +14,7 @@ $router->put('/users/password', ['uses' => 'UserController@updatePassword']);
 /**********************************************************************************************************************/
 
 /* Rutas para las ofertas*/
-$router->get('/offers/professionals', ['uses' => 'OfferController@getAllProfessionals']);
+$router->get('/offers/professionals', ['uses' => 'OfferController@getAppliedProfessionals']);
 $router->post('/offers/professionals', ['uses' => 'OfferController@createProfessional']);
 
 $router->post('/offers', ['uses' => 'OfferController@createOffer']);
@@ -24,10 +24,17 @@ $router->delete('/offers/finish', ['uses' => 'OfferController@finishOffer']);
 /**********************************************************************************************************************/
 
 /* Rutas para los profesionales*/
+$router->get('/professionals/abilities', ['uses' => 'ProfessionalController@getAbilities']);
+$router->get('/professionals/academicFormations', ['uses' => 'ProfessionalController@getAcademicFormations']);
+$router->get('/professionals/courses', ['uses' => 'ProfessionalController@getCourses']);
+$router->get('/professionals/languages', ['uses' => 'ProfessionalController@getLanguages']);
+$router->get('/professionals/professionalExperiences', ['uses' => 'ProfessionalController@getProfessionalExperiences']);
+$router->get('/professionals/professionalReferences', ['uses' => 'ProfessionalController@getProfessionalReferences']);
+
 $router->get('/professionals/offers', ['uses' => 'ProfessionalController@getAppliedOffers']);
 $router->post('/professionals/offers/filter', ['uses' => 'ProfessionalController@filterOffers']);
 $router->post('/professionals/offers', ['uses' => 'ProfessionalController@createOffer']);
-
+$router->get('/professionals/companies', ['uses' => 'ProfessionalController@getAppliedCompanies']);
 
 $router->get('/professionals/{id}', ['uses' => 'ProfessionalController@showProfessional']);
 $router->post('/professionals', ['uses' => 'ProfessionalController@createProfessional']);
@@ -109,9 +116,11 @@ $router->post('/users/createProfessionalUser', ['uses' => 'UserController@create
 /**********************************************************************************************************************/
 
 /* Rutas para obtener todos los profesionales y ofertas*/
-$router->get('/postulants', ['uses' => 'ProfessionalController@getAllProfessionals']);
+$router->get('/postulants', ['uses' => 'ProfessionalController@getProfessionals']);
+$router->post('/postulants/apply', ['uses' => 'ProfessionalController@applyPostulant']);
+$router->get('/postulants/validateAppliedPostulant', ['uses' => 'ProfessionalController@validateAppliedPostulant']);
 $router->get('/oportunities', ['uses' => 'OfferController@getOffers']);
-$router->get('/oportunities/filter', ['uses' => 'OfferController@filterOffersFields']);
+
 $router->get('/oportunities/validateAppliedOffer', ['uses' => 'OfferController@validateAppliedOffer']);
 $router->post('/oportunities/apply', ['uses' => 'OfferController@applyOffer']);
 $router->get('/totalCompanies', function () {
@@ -135,5 +144,7 @@ $router->get('/offers', ['uses' => 'OfferController@getAllOffers']);
 
 /* Rutas para filtrar a los profesionales y ofertas*/
 $router->post('/offers/filter', ['uses' => 'OfferController@filterOffers']);
-$router->post('/professionals/filter', ['uses' => 'ProfessionalController@filterProfessionals']);
+$router->get('/oportunities/filter', ['uses' => 'OfferController@filterOffersFields']);
+$router->post('/postulants/filter', ['uses' => 'ProfessionalController@filterPostulants']);
+$router->get('/postulants/filter', ['uses' => 'ProfessionalController@filterPostulantsFields']);
 /**********************************************************************************************************************/

@@ -2,7 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Company;
 use App\Professional;
+use App\AcademicFormation;
+use App\Ability;
+use App\Language;
+use App\Course;
+use App\ProfessionalExperience;
+use App\ProfessionalReference;
 use Illuminate\Support\Facades\DB;
 use App\Offer;
 use Illuminate\Http\Request;
@@ -12,6 +19,259 @@ Use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ProfessionalController extends Controller
 {
+    function getAbilities(Request $request)
+    {
+        try {
+            $professional = Professional::where('user_id', $request->user_id)->first();
+            if ($professional) {
+                $abilities = Ability::where('professional_id', $professional->id)
+                    ->where('state', '<>', 'DELETED')
+                    ->orderby($request->field, $request->order)
+                    ->paginate($request->limit);
+                return response()->json([
+                    'pagination' => [
+                        'total' => $abilities->total(),
+                        'current_page' => $abilities->currentPage(),
+                        'per_page' => $abilities->perPage(),
+                        'last_page' => $abilities->lastPage(),
+                        'from' => $abilities->firstItem(),
+                        'to' => $abilities->lastItem()
+                    ], 'abilities' => $abilities], 200);
+            } else {
+                return response()->json([
+                    'pagination' => [
+                        'total' => 0,
+                        'current_page' => 1,
+                        'per_page' => $request->limit,
+                        'last_page' => 1,
+                        'from' => null,
+                        'to' => null
+                    ], 'abilities' => null], 404);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        } catch (ErrorException $e) {
+            return response()->json($e, 500);
+        }
+    }
+
+    function getAcademicFormations(Request $request)
+    {
+        try {
+            $professional = Professional::where('user_id', $request->user_id)->first();
+            if ($professional) {
+                $academicFormations = AcademicFormation::where('professional_id', $professional->id)
+                    ->where('state', 'ACTIVE')
+                    ->orderby($request->field, $request->order)
+                    ->paginate($request->limit);
+            } else {
+                return response()->json([
+                    'pagination' => [
+                        'total' => 0,
+                        'current_page' => 1,
+                        'per_page' => $request->limit,
+                        'last_page' => 1,
+                        'from' => null,
+                        'to' => null
+                    ], 'academicFormations' => null], 404);
+            }
+            return response()->json([
+                'pagination' => [
+                    'total' => $academicFormations->total(),
+                    'current_page' => $academicFormations->currentPage(),
+                    'per_page' => $academicFormations->perPage(),
+                    'last_page' => $academicFormations->lastPage(),
+                    'from' => $academicFormations->firstItem(),
+                    'to' => $academicFormations->lastItem()
+                ], 'academicFormations' => $academicFormations], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        }
+    }
+
+    function getCourses(Request $request)
+    {
+        try {
+            $professional = Professional::where('user_id', $request->user_id)->first();
+            if ($professional) {
+                $courses = Course::where('professional_id', $professional->id)
+                    ->orderby($request->field, $request->order)
+                    ->paginate($request->limit);
+                return response()->json([
+                    'pagination' => [
+                        'total' => $courses->total(),
+                        'current_page' => $courses->currentPage(),
+                        'per_page' => $courses->perPage(),
+                        'last_page' => $courses->lastPage(),
+                        'from' => $courses->firstItem(),
+                        'to' => $courses->lastItem()
+                    ], 'courses' => $courses], 200);
+            } else {
+                return response()->json([
+                    'pagination' => [
+                        'total' => 0,
+                        'current_page' => 1,
+                        'per_page' => $request->limit,
+                        'last_page' => 1,
+                        'from' => null,
+                        'to' => null
+                    ], 'courses' => null], 404);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        } catch (ErrorException $e) {
+            return response()->json($e, 500);
+        }
+    }
+
+    function getLanguages(Request $request)
+    {
+        try {
+            $professional = Professional::where('user_id', $request->user_id)->first();
+            if ($professional) {
+                $languages = Language::where('professional_id', $professional->id)
+                    ->where('state', 'ACTIVE')
+                    ->orderby($request->field, $request->order)
+                    ->paginate($request->limit);
+                return response()->json([
+                    'pagination' => [
+                        'total' => $languages->total(),
+                        'current_page' => $languages->currentPage(),
+                        'per_page' => $languages->perPage(),
+                        'last_page' => $languages->lastPage(),
+                        'from' => $languages->firstItem(),
+                        'to' => $languages->lastItem()
+                    ], 'languages' => $languages], 200);
+            } else {
+                return response()->json([
+                    'pagination' => [
+                        'total' => 0,
+                        'current_page' => 1,
+                        'per_page' => $request->limit,
+                        'last_page' => 1,
+                        'from' => null,
+                        'to' => null
+                    ], 'languages' => null], 404);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        } catch (ErrorException $e) {
+            return response()->json($e, 500);
+        }
+    }
+
+    function getProfessionalExperiences(Request $request)
+    {
+        try {
+            $professional = Professional::where('user_id', $request->user_id)->first();
+            if ($professional) {
+                $professionalExperiences = ProfessionalExperience::where('professional_id', $professional->id)
+                    ->where('state', 'ACTIVE')
+                    ->orderby($request->field, $request->order)
+                    ->paginate($request->limit);
+                return response()->json([
+                    'pagination' => [
+                        'total' => $professionalExperiences->total(),
+                        'current_page' => $professionalExperiences->currentPage(),
+                        'per_page' => $professionalExperiences->perPage(),
+                        'last_page' => $professionalExperiences->lastPage(),
+                        'from' => $professionalExperiences->firstItem(),
+                        'to' => $professionalExperiences->lastItem()
+                    ], 'professionalExperiences' => $professionalExperiences], 200);
+            } else {
+                return response()->json([
+                    'pagination' => [
+                        'total' => 0,
+                        'current_page' => 1,
+                        'per_page' => $request->limit,
+                        'last_page' => 1,
+                        'from' => null,
+                        'to' => null
+                    ], 'professionalExperiences' => null], 404);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        } catch (ErrorException $e) {
+            return response()->json($e, 500);
+        }
+    }
+
+    function getProfessionalReferences(Request $request)
+    {
+        try {
+            $professional = Professional::where('user_id', $request->user_id)->first();
+            if ($professional) {
+                $professionalReferences = ProfessionalReference::where('professional_id', $professional->id)
+                    ->where('state', 'ACTIVE')
+                    ->orderby($request->field, $request->order)
+                    ->paginate($request->limit);
+                return response()->json([
+                    'pagination' => [
+                        'total' => $professionalReferences->total(),
+                        'current_page' => $professionalReferences->currentPage(),
+                        'per_page' => $professionalReferences->perPage(),
+                        'last_page' => $professionalReferences->lastPage(),
+                        'from' => $professionalReferences->firstItem(),
+                        'to' => $professionalReferences->lastItem()
+                    ], 'professionalReferences' => $professionalReferences], 200);
+            } else {
+                return response()->json([
+                    'pagination' => [
+                        'total' => 0,
+                        'current_page' => 1,
+                        'per_page' => $request->limit,
+                        'last_page' => 1,
+                        'from' => null,
+                        'to' => null
+                    ], 'professionalReference' => null], 404);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        } catch (ErrorException $e) {
+            return response()->json($e, 500);
+        }
+    }
+
     function filterOffers(Request $request)
     {
 
@@ -34,6 +294,97 @@ class ProfessionalController extends Controller
                 'from' => $offers->firstItem(),
                 'to' => $offers->lastItem()
             ], 'offers' => $offers], 200);
+
+    }
+
+    function getAppliedCompanies(Request $request)
+    {
+        try {
+            $professional = Professional::where('user_id', $request->user_id)->first();
+            if ($professional) {
+                $companies = DB::table('companies')
+                    ->join('company_professional', 'company_professional.company_id', '=', 'companies.id')
+                    ->where('company_professional.professional_id', $professional->id)
+                    ->where('company_professional.state', 'ACTIVE')
+//                    ->orWhere('offer_professional.state', 'FINISHED')
+                    ->orderby('company_professional.' . $request->field, $request->order)
+                    ->paginate($request->limit);
+                return response()->json([
+                    'pagination' => [
+                        'total' => $companies->total(),
+                        'current_page' => $companies->currentPage(),
+                        'per_page' => $companies->perPage(),
+                        'last_page' => $companies->lastPage(),
+                        'from' => $companies->firstItem(),
+                        'to' => $companies->lastItem()
+                    ], 'companies' => $companies], 200);
+            } else {
+                return response()->json([
+                    'pagination' => [
+                        'total' => 0,
+                        'current_page' => 1,
+                        'per_page' => $request->limit,
+                        'last_page' => 1,
+                        'from' => null,
+                        'to' => null
+                    ], 'companies' => null], 404);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 400);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
+
+    }
+
+    function filterPostulants(Request $request)
+    {
+        $data = $request->json()->all();
+        $dataFilter = $data['filters'];
+        $postulants = Professional::
+        join('academic_formations', 'academic_formations.professional_id', '=', 'professionals.id')
+            ->orWhere($dataFilter['conditions'])
+            ->where('professionals.state', 'ACTIVE')
+            ->where('academic_formations.state', 'ACTIVE')
+            ->orderby('professionals.' . $request->field, $request->order)
+            ->paginate($request->limit);
+        return response()->json([
+            'pagination' => [
+                'total' => $postulants->total(),
+                'current_page' => $postulants->currentPage(),
+                'per_page' => $postulants->perPage(),
+                'last_page' => $postulants->lastPage(),
+                'from' => $postulants->firstItem(),
+                'to' => $postulants->lastItem()
+            ], 'postulants' => $postulants], 200);
+
+    }
+
+    function filterPostulantsFields(Request $request)
+    {
+        $postulants = Professional::
+        join('academic_formations', 'academic_formations.professional_id', '=', 'professionals.id')
+            ->where('professionals.state', 'ACTIVE')
+            ->where('academic_formations.state', 'ACTIVE')
+            ->where('career', 'like', strtoupper($request->filter) . '%')
+            ->OrWhere('professional_degree', 'like', '%' . strtoupper($request->filter) . '%')
+            ->orderby('professionals.' . $request->field, $request->order)
+            ->paginate($request->limit);
+        return response()->json([
+            'pagination' => [
+                'total' => $postulants->total(),
+                'current_page' => $postulants->currentPage(),
+                'per_page' => $postulants->perPage(),
+                'last_page' => $postulants->lastPage(),
+                'from' => $postulants->firstItem(),
+                'to' => $postulants->lastItem()
+            ], 'postulants' => $postulants], 200);
 
     }
 
@@ -135,6 +486,30 @@ class ProfessionalController extends Controller
     }
 
     /* Metodos para gestionar los datos personales*/
+    function getProfessionals(Request $request)
+    {
+        $professionals = Professional::with('academicFormations')
+            ->where('professionals.state', 'ACTIVE')
+//            ->where('academic_formations.state', 'ACTIVE')
+            ->orderby('professionals.' . $request->field, $request->order)
+            ->paginate($request->limit);
+
+//        $professionals = Professional::where('professionals.state', 'ACTIVE')
+//            ->where('academic_formations.state', 'ACTIVE')
+//            ->join('academic_formations', 'academic_formations.professional_id', '=', 'academic_formations.id')
+//            ->orderby('professionals.' . $request->field, $request->order)
+//            ->paginate($request->limit);
+        return response()->json([
+            'pagination' => [
+                'total' => $professionals->total(),
+                'current_page' => $professionals->currentPage(),
+                'per_page' => $professionals->perPage(),
+                'last_page' => $professionals->lastPage(),
+                'from' => $professionals->firstItem(),
+                'to' => $professionals->lastItem()
+            ], 'postulants' => $professionals], 200);
+
+    }
 
     function getAllProfessionals()
     {
@@ -169,15 +544,16 @@ class ProfessionalController extends Controller
             $dataProfessional = $data['professional'];
             $professional = Professional::findOrFail($dataProfessional['id'])->update([
                 'identity' => $dataProfessional['identity'],
-                'first_name' => $dataProfessional['first_name'],
-                'last_name' => $dataProfessional['last_name'],
-                'nationality' => $dataProfessional['nationality'],
-                'civil_state' => $dataProfessional['civil_state'],
+                'first_name' => strtoupper($dataProfessional['first_name']),
+                'last_name' => strtoupper($dataProfessional['last_name']),
+//                'email' => strtolower($dataProfessional['email']),
+                'nationality' => strtoupper($dataProfessional['nationality']),
+                'civil_state' => strtoupper($dataProfessional['civil_state']),
                 'birthdate' => $dataProfessional['birthdate'],
-                'gender' => $dataProfessional['gender'],
+                'gender' => strtoupper($dataProfessional['gender']),
                 'phone' => $dataProfessional['phone'],
-                'address' => $dataProfessional['address'],
-                'about_me' => $dataProfessional['about_me'],
+                'address' => strtoupper($dataProfessional['address']),
+                'about_me' => strtoupper($dataProfessional['about_me']),
             ]);
             return response()->json($professional, 201);
         } catch (ModelNotFoundException $e) {
@@ -210,4 +586,75 @@ class ProfessionalController extends Controller
         return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 
+    function applyPostulant(Request $request)
+    {
+        try {
+            $data = $request->json()->all();
+            $user = $data['user'];
+            $postulant = $data['postulant'];
+            $company = Company::where('user_id', $user['id'])->first();
+            if ($company) {
+                $appliedOffer = DB::table('company_professional')
+                    ->where('professional_id', $postulant['id'])
+                    ->where('company_id', $company->id)
+                    ->where('state', 'ACTIVE')
+                    ->first();
+                if (!$appliedOffer) {
+                    $company->professionals()->attach($postulant['id']);
+                    return response()->json(true, 201);
+                } else {
+                    return response()->json(false, 201);
+                }
+            } else {
+                return response()->json(null, 404);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 409);
+        } catch (\PDOException $e) {
+            return response()->json($e, 409);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
+
+    }
+
+    function validateAppliedPostulant(Request $request)
+    {
+        try {
+            $company = Company::where('user_id', $request->user_id)->first();
+            if ($company) {
+                $appliedOffer = DB::table('company_professional')
+                    ->where('professional_id', $request->professional_id)
+                    ->where('company_id', $company->id)
+                    ->where('state', 'ACTIVE')
+                    ->first();
+                if ($appliedOffer) {
+                    return response()->json(true, 200);
+                } else {
+                    return response()->json(false, 200);
+                }
+            } else {
+                return response()->json(null, 404);
+            }
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 409);
+        } catch (\PDOException $e) {
+            return response()->json($e, 409);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
+    }
 }

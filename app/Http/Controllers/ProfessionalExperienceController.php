@@ -12,7 +12,7 @@ class ProfessionalExperienceController extends Controller
     function getProfessionalExperiences(Request $request)
     {
         try {
-            $professional = Professional::where('user_id', $request->user_id)->first();
+            $professional = Professional::where('id', $request->user_id)->first();
             if ($professional) {
                 $professionalExperiences = ProfessionalExperience::where('professional_id', $professional->id)
                     ->where('state', 'ACTIVE')

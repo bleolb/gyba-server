@@ -12,7 +12,7 @@ class CourseController extends Controller
     function getCourses(Request $request)
     {
         try {
-            $professional = Professional::where('user_id', $request->user_id)->first();
+            $professional = Professional::where('id', $request->user_id)->first();
             if ($professional) {
                 $courses = Course::where('professional_id', $professional->id)
                     ->orderby($request->field, $request->order)

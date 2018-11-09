@@ -12,7 +12,7 @@ class AbilityController extends Controller
     function getAbilities(Request $request)
     {
         try {
-            $professional = Professional::where('user_id', $request->user_id)->first();
+            $professional = Professional::where('id', $request->user_id)->first();
             if ($professional) {
                 $abilities = Ability::where('professional_id', $professional->id)
                     ->where('state', '<>', 'DELETED')

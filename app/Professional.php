@@ -31,6 +31,11 @@ class Professional extends Model
         return $this->belongsToMany('App\Offer')->withTimestamps();
     }
 
+    public function companies()
+    {
+        return $this->belongsToMany('App\Company')->withTimestamps();
+    }
+
     public function user()
     {
         return $this->belongsTo('App\User');

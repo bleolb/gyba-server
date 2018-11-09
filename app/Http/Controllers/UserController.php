@@ -194,14 +194,14 @@ class UserController extends Controller
             $user->roles()->attach(2);
             $user->company()->create([
                 'identity' => $dataCompany['identity'],
-                'email' => $dataCompany['email'],
+                'email' => strtolower($dataCompany['email']),
                 'nature' => $dataCompany['nature'],
-                'trade_name' => $dataCompany['trade_name'],
-                'comercial_activity' => $dataCompany['comercial_activity'],
+                'trade_name' => strtoupper($dataCompany['trade_name']),
+                'comercial_activity' => strtoupper($dataCompany['comercial_activity']),
                 'phone' => $dataCompany['phone'],
                 'cell_phone' => $dataCompany['cell_phone'],
-                'web_page' => $dataCompany['web_page'],
-                'address' => $dataCompany['address'],
+                'web_page' => strtolower($dataCompany['web_page']),
+                'address' => strtoupper($dataCompany['address']),
             ]);
             DB::commit();
             return $this->login($request);

@@ -12,7 +12,7 @@ class LanguageController extends Controller
     function getLanguages(Request $request)
     {
         try {
-            $professional = Professional::where('user_id', $request->user_id)->first();
+            $professional = Professional::where('id', $request->user_id)->first();
             if ($professional) {
                 $languages = Language::where('professional_id', $professional->id)
                     ->where('state', 'ACTIVE')

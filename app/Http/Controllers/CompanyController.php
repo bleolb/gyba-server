@@ -14,24 +14,24 @@ class CompanyController extends Controller
     function getAppliedProfessionals(Request $request)
     {
         try {
-            $professional = Professional::where('user_id', $request->user_id)->first();
-            if ($professional) {
-                $companies = DB::table('companies')
-                    ->join('company_professional', 'company_professional.company_id', '=', 'companies.id')
-                    ->where('company_professional.professional_id', $professional->id)
+            $company = Company::where('user_id', $request->user_id)->first();
+
+            if ($company) {
+                $professionals = DB::table('professionals')
+                    ->join('company_professional', 'company_professional.professional_id', '=', 'professionals.id')
+                    ->where('company_professional.company_id', $company->id)
                     ->where('company_professional.state', 'ACTIVE')
-//                    ->orWhere('offer_professional.state', 'FINISHED')
                     ->orderby('company_professional.' . $request->field, $request->order)
                     ->paginate($request->limit);
                 return response()->json([
                     'pagination' => [
-                        'total' => $companies->total(),
-                        'current_page' => $companies->currentPage(),
-                        'per_page' => $companies->perPage(),
-                        'last_page' => $companies->lastPage(),
-                        'from' => $companies->firstItem(),
-                        'to' => $companies->lastItem()
-                    ], 'companies' => $companies], 200);
+                        'total' => $professionals->total(),
+                        'current_page' => $professionals->currentPage(),
+                        'per_page' => $professionals->perPage(),
+                        'last_page' => $professionals->lastPage(),
+                        'from' => $professionals->firstItem(),
+                        'to' => $professionals->lastItem()
+                    ], 'professionals' => $professionals], 200);
             } else {
                 return response()->json([
                     'pagination' => [
@@ -74,35 +74,6 @@ class CompanyController extends Controller
                     'from' => $offers->firstItem(),
                     'to' => $offers->lastItem()
                 ], 'offers' => $offers], 200);
-        } catch (ModelNotFoundException $e) {
-            return response()->json($e, 405);
-        } catch (NotFoundHttpException  $e) {
-            return response()->json($e, 405);
-        } catch (QueryException  $e) {
-            return response()->json($e, 405);
-        } catch (Exception $e) {
-            return response()->json($e, 500);
-        } catch (Error $e) {
-            return response()->json($e, 500);
-        }
-    }
-
-    function getProfessionals(Request $request)
-    {
-        try {
-            $offer = Offer::findOrFail($request->offer_id);
-            $professionals = $offer->professionals()
-                ->orderby($request->field, $request->order)
-                ->paginate($request->limit);
-            return response()->json([
-                'pagination' => [
-                    'total' => $professionals->total(),
-                    'current_page' => $professionals->currentPage(),
-                    'per_page' => $professionals->perPage(),
-                    'last_page' => $professionals->lastPage(),
-                    'from' => $professionals->firstItem(),
-                    'to' => $professionals->lastItem()
-                ], 'professionals' => $professionals], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json($e, 405);
         } catch (NotFoundHttpException  $e) {
@@ -267,13 +238,14 @@ class CompanyController extends Controller
             $dataCompany = $data['company'];
             $response = Company::findOrFail($dataCompany['id'])->update([
                 'identity' => $dataCompany['identity'],
+//                'email' => strtolower($dataCompany['email']),
                 'nature' => $dataCompany['nature'],
-                'trade_name' => $dataCompany['trade_name'],
-                'comercial_activity' => $dataCompany['comercial_activity'],
+                'trade_name' => strtoupper($dataCompany['trade_name']),
+                'comercial_activity' => strtoupper($dataCompany['comercial_activity']),
                 'phone' => $dataCompany['phone'],
                 'cell_phone' => $dataCompany['cell_phone'],
-                'web_page' => $dataCompany['web_page'],
-                'address' => $dataCompany['address'],
+                'web_page' => strtolower($dataCompany['web_page']),
+                'address' => strtoupper($dataCompany['address']),
             ]);
             return response()->json($response, 201);
         } catch (ModelNotFoundException $e) {
