@@ -11,6 +11,83 @@ use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
+
+    function applyPostulant(Request $request)
+    {
+        try {
+            $data = $request->json()->all();
+            $user = $data['user'];
+            $postulant = $data['postulant'];
+            $company = Company::where('user_id', $user['id'])->first();
+            if ($company) {
+                $appliedOffer = DB::table('company_professional')
+                    ->where('professional_id', $postulant['id'])
+                    ->where('company_id', $company->id)
+                    ->where('state', 'ACTIVE')
+                    ->first();
+                if (!$appliedOffer) {
+                    $company->professionals()->attach($postulant['id']);
+                    return response()->json(true, 201);
+                } else {
+                    return response()->json(false, 201);
+                }
+            } else {
+                return response()->json(null, 404);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 409);
+        } catch (\PDOException $e) {
+            return response()->json($e, 409);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
+
+    }
+
+    function detachPostulant(Request $request)
+    {
+        try {
+            $data = $request->json()->all();
+            $user = $data['user'];
+            $postulant = $data['postulant'];
+            $company = Company::where('user_id', $user['id'])->first();
+            if ($company) {
+                $appliedOffer = DB::table('company_professional')
+                    ->where('professional_id', $postulant['id'])
+                    ->where('company_id', $company->id)
+                    ->where('state', 'ACTIVE')
+                    ->first();
+                if (!$appliedOffer) {
+                    $company->professionals()->detach($postulant['id']);
+                    return response()->json($user['id'], 201);
+                } else {
+                    return response()->json(false, 201);
+                }
+            } else {
+                return response()->json(null, 404);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 409);
+        } catch (\PDOException $e) {
+            return response()->json($e, 409);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
+
+    }
+
     function getAppliedProfessionals(Request $request)
     {
         try {
@@ -238,7 +315,7 @@ class CompanyController extends Controller
             $dataCompany = $data['company'];
             $response = Company::findOrFail($dataCompany['id'])->update([
                 'identity' => $dataCompany['identity'],
-//                'email' => strtolower($dataCompany['email']),
+                'email' => strtolower($dataCompany['email']),
                 'nature' => $dataCompany['nature'],
                 'trade_name' => strtoupper($dataCompany['trade_name']),
                 'comercial_activity' => strtoupper($dataCompany['comercial_activity']),

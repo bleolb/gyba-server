@@ -546,7 +546,7 @@ class ProfessionalController extends Controller
                 'identity' => $dataProfessional['identity'],
                 'first_name' => strtoupper($dataProfessional['first_name']),
                 'last_name' => strtoupper($dataProfessional['last_name']),
-//                'email' => strtolower($dataProfessional['email']),
+                'email' => strtolower($dataProfessional['email']),
                 'nationality' => strtoupper($dataProfessional['nationality']),
                 'civil_state' => strtoupper($dataProfessional['civil_state']),
                 'birthdate' => $dataProfessional['birthdate'],
@@ -586,43 +586,7 @@ class ProfessionalController extends Controller
         return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
 
-    function applyPostulant(Request $request)
-    {
-        try {
-            $data = $request->json()->all();
-            $user = $data['user'];
-            $postulant = $data['postulant'];
-            $company = Company::where('user_id', $user['id'])->first();
-            if ($company) {
-                $appliedOffer = DB::table('company_professional')
-                    ->where('professional_id', $postulant['id'])
-                    ->where('company_id', $company->id)
-                    ->where('state', 'ACTIVE')
-                    ->first();
-                if (!$appliedOffer) {
-                    $company->professionals()->attach($postulant['id']);
-                    return response()->json(true, 201);
-                } else {
-                    return response()->json(false, 201);
-                }
-            } else {
-                return response()->json(null, 404);
-            }
-        } catch (ModelNotFoundException $e) {
-            return response()->json($e, 405);
-        } catch (NotFoundHttpException  $e) {
-            return response()->json($e, 405);
-        } catch (QueryException $e) {
-            return response()->json($e, 409);
-        } catch (\PDOException $e) {
-            return response()->json($e, 409);
-        } catch (Exception $e) {
-            return response()->json($e, 500);
-        } catch (Error $e) {
-            return response()->json($e, 500);
-        }
 
-    }
 
     function validateAppliedPostulant(Request $request)
     {
