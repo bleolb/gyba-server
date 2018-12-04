@@ -58,17 +58,9 @@ class CompanyController extends Controller
             $postulant = $data['postulant'];
             $company = Company::where('user_id', $user['id'])->first();
             if ($company) {
-                $appliedOffer = DB::table('company_professional')
-                    ->where('professional_id', $postulant['id'])
-                    ->where('company_id', $company->id)
-                    ->where('state', 'ACTIVE')
-                    ->first();
-                if (!$appliedOffer) {
-                    $company->professionals()->detach($postulant['id']);
-                    return response()->json($user['id'], 201);
-                } else {
-                    return response()->json(false, 201);
-                }
+                $response = $company->professionals()->detach($postulant['professional_id']);
+                return response()->json($response, 201);
+
             } else {
                 return response()->json(null, 404);
             }

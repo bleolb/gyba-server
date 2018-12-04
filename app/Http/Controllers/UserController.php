@@ -278,5 +278,23 @@ class UserController extends Controller
         }
 
     }
+
+    function validateUserName($userName)
+    {
+        try {
+            $user = User::where('user_name', $userName)->first();
+            return response()->json(['email' => $user['email']], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException  $e) {
+            return response()->json($e, 405);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
+    }
 }
 

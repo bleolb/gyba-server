@@ -9,13 +9,6 @@ use App\Ability;
 
 class AbilityController extends Controller
 {
-
-    function prueba(Request $request)
-    {
-        $request['id'];
-
-    }
-
     function getAbilities(Request $request)
     {
         try {

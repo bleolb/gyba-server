@@ -3,7 +3,7 @@
 use Carbon\Carbon;
 $router->post('/', ['uses' => 'AbilityController@prueba']);
 /* Rutas con autenticacion*/
-$router->group(['middleware' => ['auth']], function () use ($router) {
+$router->group(['middleware' => []], function () use ($router) {
     /* Rutas para los usuarios*/
 
     $router->get('/users', ['uses' => 'UserController@getAllUsers']);
@@ -12,6 +12,7 @@ $router->group(['middleware' => ['auth']], function () use ($router) {
     $router->put('/users', ['uses' => 'UserController@updateUser']);
     $router->delete('/users', ['uses' => 'UserController@deleteUser']);
     $router->put('/users/password', ['uses' => 'UserController@updatePassword']);
+    $router->get('/users/validateUserName/{id}', ['uses' => 'UserController@validateUserName']);
     /**********************************************************************************************************************/
 
     /* Rutas para las ofertas*/
@@ -36,6 +37,7 @@ $router->group(['middleware' => ['auth']], function () use ($router) {
     $router->post('/professionals/offers/filter', ['uses' => 'ProfessionalController@filterOffers']);
     $router->post('/professionals/offers', ['uses' => 'ProfessionalController@createOffer']);
     $router->get('/professionals/companies', ['uses' => 'ProfessionalController@getAppliedCompanies']);
+
 
     $router->get('/professionals/{id}', ['uses' => 'ProfessionalController@showProfessional']);
     $router->post('/professionals', ['uses' => 'ProfessionalController@createProfessional']);
@@ -119,7 +121,8 @@ $router->post('/users/createProfessionalUser', ['uses' => 'UserController@create
 /* Rutas para obtener todos los profesionales y ofertas*/
 $router->get('/postulants', ['uses' => 'ProfessionalController@getProfessionals']);
 $router->post('/postulants/apply', ['uses' => 'CompanyController@applyPostulant']);
-$router->post('/postulants/detach', ['uses' => 'CompanyController@detachPostulant']);
+$router->post('/postulants/detachCompany', ['uses' => 'ProfessionalController@detachCompany']);
+$router->post('/companies/detachPostulant', ['uses' => 'CompanyController@detachPostulant']);
 $router->get('/postulants/validateAppliedPostulant', ['uses' => 'ProfessionalController@validateAppliedPostulant']);
 $router->get('/oportunities', ['uses' => 'OfferController@getOffers']);
 

@@ -583,10 +583,7 @@ class ProfessionalController extends Controller
         } catch (Error $e) {
             return response()->json('Error', 500);
         }
-        return response()->json(['error' => 'Unsupported Media Type'], 415, []);
     }
-
-
 
     function validateAppliedPostulant(Request $request)
     {
@@ -621,4 +618,40 @@ class ProfessionalController extends Controller
             return response()->json($e, 500);
         }
     }
+
+    function detachCompany(Request $request)
+    {
+        try {
+            $data = $request->json()->all();
+            $user = $data['user'];
+            $company = $data['company'];
+            $professional = Professional::where('user_id', $user['id'])->first();
+            if ($professional) {
+                $response = $professional->companies()->detach($company['company_id']);
+                if ($response == 0) {
+                    return response()->json($response, 404);
+                } else {
+                    return response()->json($response, 201);
+                }
+
+            } else {
+                return response()->json(0, 404);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e, 405);
+        } catch (NotFoundHttpException  $e) {
+            return response()->json($e, 405);
+        } catch (QueryException $e) {
+            return response()->json($e, 409);
+        } catch (\PDOException $e) {
+            return response()->json($e, 409);
+        } catch (Exception $e) {
+            return response()->json($e, 500);
+        } catch (Error $e) {
+            return response()->json($e, 500);
+        }
+
+    }
+
+
 }
