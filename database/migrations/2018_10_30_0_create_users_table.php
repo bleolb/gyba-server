@@ -15,14 +15,16 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-            $table->string('user_name')->unique();
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('role');
+            $table->string('address');
+            $table->string('phone');
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('avatar')->nullable();
-            $table->string('api_token', 60)->unique();
+            $table->string('api_token', 60)->unique(); //seguridad
             $table->string('state')->default('ACTIVE');
-            $table->timestamps();
+            $table->timestamps(); //crea dos campos uno de fecha de creacion de registro y ultima modificacion
         });
     }
 

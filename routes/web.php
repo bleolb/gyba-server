@@ -1,7 +1,8 @@
 <?php
 
 use Carbon\Carbon;
-$router->post('/', ['uses' => 'AbilityController@prueba']);
+$router->get('/books', ['uses' => 'BooksController@getAll']);
+$router->get('/books/show', ['uses' => 'BooksController@show']);
 /* Rutas con autenticacion*/
 $router->group(['middleware' => []], function () use ($router) {
     /* Rutas para los usuarios*/

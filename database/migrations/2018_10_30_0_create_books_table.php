@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCompanyProfessionalTable extends Migration
+class CreateBooksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateCompanyProfessionalTable extends Migration
      */
     public function up()
     {
-        Schema::create('company_professional', function (Blueprint $table) {
+        Schema::create('books', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('company_id')->unsigned();
-            $table->foreign('company_id')->references('id')->on('companies');
-            $table->integer('professional_id')->unsigned();
-            $table->foreign('professional_id')->references('id')->on('professionals');
+            $table->string('code');
+            $table->string('title');
+            $table->string('author');
+            $table->string('editorial');
             $table->string('state')->default('ACTIVE');
             $table->timestamps();
         });
@@ -31,6 +31,6 @@ class CreateCompanyProfessionalTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('company_professional');
+            Schema::dropIfExists('books');
     }
 }

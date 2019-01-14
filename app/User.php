@@ -18,7 +18,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'name', 'user_name', 'email', 'api_token', 'password', 'avatar', 'state',
+        'first_name', 'last_name','address', 'phone', 'role', 'email', 'api_token', 'password', 'state',
     ];
 
     /**
@@ -28,7 +28,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     protected $hidden = [
         'password',
-    ];
+    ]; //lo que no se mostrara cuando se consulte
 
     public function roles()
     {

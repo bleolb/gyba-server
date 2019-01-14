@@ -12,13 +12,18 @@
 */
 
 // User
+use Illuminate\Support\Facades\Hash;
+
 $factory->define(App\User::class, function (Faker\Generator $faker) {
     static $password;
     return [
-        'name' => $faker->text(rand(32, 10)),
-        'user_name' => $faker->unique()->safeEmail,
+        'first_name' => $faker->text(rand(32, 10)),
+        'last_name' => $faker->text(rand(32, 10)),
+        'phone' => $faker->text(rand(32, 10)),
+        'address' => $faker->text(rand(32, 10)),
+        'role' => $faker->text(rand(32, 10)),
         'email' => $faker->unique()->safeEmail,
-        'password' => '123456',
+        'password' =>Hash::make('123456'),
         'api_token' => str_random(60)];
 });
 

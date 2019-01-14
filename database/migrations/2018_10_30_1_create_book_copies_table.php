@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateOfferProfessionalTable extends Migration
+class CreateBookCopiesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateOfferProfessionalTable extends Migration
      */
     public function up()
     {
-        Schema::create('offer_professional', function (Blueprint $table) {
+        Schema::create('book_copies', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('offer_id')->unsigned();
-            $table->foreign('offer_id')->references('id')->on('offers');
-            $table->integer('professional_id')->unsigned();
-            $table->foreign('professional_id')->references('id')->on('professionals');
+            $table->integer('book_id')->unsigned();
+            $table->foreign('book_id')->references('id')->on('books');
+            $table->string('code');
             $table->string('state')->default('ACTIVE');
             $table->timestamps();
         });
@@ -31,6 +30,6 @@ class CreateOfferProfessionalTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('offer_professional');
+        Schema::dropIfExists('book_copies');
     }
 }
