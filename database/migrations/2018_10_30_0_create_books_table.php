@@ -20,7 +20,6 @@ class CreateBooksTable extends Migration
             $table->string('author');
             $table->string('editorial');
             $table->string('state')->default('ACTIVE');
-            $table->timestamps();
         });
     }
 

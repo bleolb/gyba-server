@@ -24,8 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('api_token', 60)->unique(); //seguridad
             $table->string('state')->default('ACTIVE');
-            $table->timestamps(); //crea dos campos uno de fecha de creacion de registro y ultima modificacion
-        });
+                    });
     }
 
     /**
