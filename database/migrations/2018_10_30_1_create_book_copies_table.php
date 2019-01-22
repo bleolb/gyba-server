@@ -17,9 +17,9 @@ class CreateBookCopiesTable extends Migration
             $table->increments('id');
             $table->integer('book_id')->unsigned();
             $table->foreign('book_id')->references('id')->on('books');
-            $table->string('code');
+            $table->string('book_code');
+            $table->integer('quantity');
             $table->string('state')->default('ACTIVE');
-            $table->timestamps();
         });
     }
 

@@ -20,7 +20,6 @@ class CreateDetailReservationsTable extends Migration
             $table->integer('book_id')->unsigned();
             $table->foreign('book_id')->references('id')->on('books');
             $table->string('state')->default('ACTIVE');
-            $table->timestamps();
         });
     }
 

@@ -5,18 +5,17 @@ use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
-class BooksController extends Controller
+class SanctionsController extends Controller
 {
     public function create(Request $request)
     {
         $data = $request->json()->all();
-        $sql = "insert into books(code, litle, author, editorial, state)
-                  values(?,?,?,?,?)";
+        $sql = "insert into sanctions(book_id, user_id, type, state)
+                  values(?,?,?,?)";
         $parameters = 
-        [$data['code'],
-         $data['litle'], 
-         $data['author'], 
-         $data['editorial'], 
+        [$data['book_id'],
+         $data['user_id'], 
+         $data['type'],
          $data['state']];
         $response = DB::select($sql, $parameters);
         return $response;
@@ -25,11 +24,15 @@ class BooksController extends Controller
     public function delete(Request $request)
     {
         $data = $request->json()->all();
-        $sql = "delete from books where id = ?";
+        $sql = "update sanctions set 
+        state=? 
+        where 
+        id =?";
                 
-        $parameters = [$data['id']];
+        $parameters = 
+        ['DELETE', //VERIFICAR CON EL TEAM
+         $data['id']];
         $response = DB::select($sql, $parameters);
         return $response;
     }
-
 }

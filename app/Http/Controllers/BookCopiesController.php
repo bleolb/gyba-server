@@ -5,18 +5,17 @@ use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
-class BooksController extends Controller
+class BookCopiesController extends Controller
 {
     public function create(Request $request)
     {
         $data = $request->json()->all();
-        $sql = "insert into books(code, litle, author, editorial, state)
-                  values(?,?,?,?,?)";
+        $sql = "insert into book_copies (book_id, book_code, quantity, state)
+                  values(?,?,?,?)";
         $parameters = 
-        [$data['code'],
-         $data['litle'], 
-         $data['author'], 
-         $data['editorial'], 
+        [$data['book_id'],
+         $data['book_code'], 
+         $data['quantity'], 
          $data['state']];
         $response = DB::select($sql, $parameters);
         return $response;
@@ -25,11 +24,11 @@ class BooksController extends Controller
     public function delete(Request $request)
     {
         $data = $request->json()->all();
-        $sql = "delete from books where id = ?";
+        $sql = "delete from book_copies where id = ?";
                 
         $parameters = [$data['id']];
         $response = DB::select($sql, $parameters);
         return $response;
     }
-
+    
 }
