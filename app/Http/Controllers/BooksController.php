@@ -10,14 +10,38 @@ class BooksController extends Controller
     public function create(Request $request)
     {
         $data = $request->json()->all();
-        $sql = "insert into books(code, litle, author, editorial, state)
+        $sql = "insert into books(code, title, author, editorial, state)
                   values(?,?,?,?,?)";
         $parameters = 
         [$data['code'],
-         $data['litle'], 
+         $data['title'], 
          $data['author'], 
          $data['editorial'], 
          $data['state']];
+        $response = DB::select($sql, $parameters);
+        return $response;
+    }
+
+    public function update(Request $request)
+    {
+
+        $data = $request->json()->all();
+        $sql = "update books set 
+        code = ?,
+        title=?,
+        author=?,
+        editorial=?,
+        state=? 
+        where 
+        id =?";
+                
+        $parameters = 
+        [$data['code'],
+         $data['title'], 
+         $data['author'], 
+         $data['editorial'], 
+         $data['state'],
+         $data['id']];
         $response = DB::select($sql, $parameters);
         return $response;
     }

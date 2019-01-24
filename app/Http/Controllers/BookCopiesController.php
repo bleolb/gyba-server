@@ -21,6 +21,28 @@ class BookCopiesController extends Controller
         return $response;
     }
 
+    public function update(Request $request)
+    {
+
+        $data = $request->json()->all();
+        $sql = "update book_copies set 
+        book_id = ?,
+        book_code=?,
+        quantity=?,
+        state=? 
+        where 
+        id =?";
+                
+        $parameters = 
+        [$data['book_id'],
+         $data['book_code'], 
+         $data['quantity'], 
+         $data['state'],
+         $data['id']];
+        $response = DB::select($sql, $parameters);
+        return $response;
+    }
+
     public function delete(Request $request)
     {
         $data = $request->json()->all();

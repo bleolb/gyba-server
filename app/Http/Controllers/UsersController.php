@@ -73,14 +73,4 @@ class UsersController extends Controller
         return $response;
     }
 
-    public function delete2(Request $request)
-    {
-        $data = $request->json()->all();
-        $sql = "delete from users where id = ?";
-                
-        $parameters = [$data['id']];
-        $response = DB::select($sql, $parameters);
-        return $response;
-    }
-
 }
